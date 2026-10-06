@@ -109,21 +109,23 @@ export default function AuditPage() {
         </div>
 
         {/* Explanation Banner */}
-        <div className="p-5 bg-gradient-to-r from-indigo-50/80 via-white to-purple-50/50 border border-indigo-100 rounded-2xl flex items-start gap-3.5 shadow-xs">
-          <ChainIcon className="w-5 h-5 text-indigo-600 flex-shrink-0 mt-0.5" />
+        <div className="p-5 bg-white border border-slate-200 rounded-2xl flex items-start gap-3.5 shadow-xs">
+          <div className="w-9 h-9 rounded-xl bg-indigo-50 border border-indigo-100 text-indigo-700 flex items-center justify-center flex-shrink-0 mt-0.5">
+            <ChainIcon className="w-5 h-5 text-indigo-600" />
+          </div>
           <div className="text-xs text-slate-600 leading-relaxed">
-            <span className="font-semibold text-[#0F172A]">How SENTINEL Blockchain Verification Works: </span>
-            Full invoice records and private employee documents are preserved in the enterprise database. For every evaluation or human action, SENTINEL generates a structured event payload, computes its SHA-256 hash combined with the previous block&apos;s hash (<span className="font-mono text-indigo-700 font-semibold">prev_hash</span>), and anchors it into an immutable chain. If any historical record is modified or deleted, the cryptographic hash link immediately breaks.
+            <span className="font-bold text-slate-900">How SENTINEL Blockchain Verification Works: </span>
+            Full invoice records and private employee documents are preserved in the enterprise database. For every evaluation or human action, SENTINEL generates a structured event payload, computes its SHA-256 hash combined with the previous block&apos;s hash (<span className="font-mono text-indigo-700 font-semibold bg-slate-100 px-1 py-0.2 rounded border border-slate-200">prev_hash</span>), and anchors it into an immutable chain. If any historical record is modified or deleted, the cryptographic hash link immediately breaks.
           </div>
         </div>
 
         {/* Ledger Table */}
         <div className="bg-white border border-slate-200 rounded-2xl shadow-xs overflow-hidden">
-          <div className="px-5 py-4 border-b border-slate-200 bg-slate-50/70 flex items-center justify-between">
-            <div className="text-xs font-semibold uppercase tracking-wider text-slate-700">
+          <div className="px-5 py-4 border-b border-slate-200 bg-slate-100/80 flex items-center justify-between">
+            <div className="text-xs font-bold uppercase tracking-wider text-slate-700">
               Recorded Ledger Blocks (Showing recent {events.length})
             </div>
-            <span className="text-[11px] font-mono text-indigo-700 bg-indigo-50 px-2.5 py-0.5 rounded-md border border-indigo-200">
+            <span className="text-[11px] font-mono text-indigo-700 bg-white px-2.5 py-0.5 rounded-md border border-slate-200 shadow-2xs font-semibold">
               Algorithm: SHA-256 Hash Chain
             </span>
           </div>
@@ -131,7 +133,7 @@ export default function AuditPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse text-xs">
               <thead>
-                <tr className="border-b border-slate-200 bg-slate-50/50 text-slate-500 uppercase tracking-wider font-semibold">
+                <tr className="border-b border-slate-200 bg-slate-100 text-slate-700 uppercase tracking-wider font-bold">
                   <th className="py-3 px-4 w-20">Block #</th>
                   <th className="py-3 px-4 w-40">Timestamp</th>
                   <th className="py-3 px-4 w-48">Event Type</th>
@@ -156,7 +158,7 @@ export default function AuditPage() {
                   </tr>
                 ) : (
                   events.map((ev, i) => (
-                    <tr key={ev.id || i} className="hover:bg-slate-50/80 transition-colors">
+                    <tr key={ev.id || i} className="even:bg-slate-50/50 hover:bg-slate-100/70 transition-colors">
                       <td className="py-3.5 px-4 text-indigo-600 font-bold">
                         #{ev.block_index !== undefined ? ev.block_index : i}
                       </td>
@@ -172,14 +174,18 @@ export default function AuditPage() {
                           {ev.event_type?.replace(/_/g, ' ') || 'SYSTEM EVENT'}
                         </span>
                       </td>
-                      <td className="py-3.5 px-4 text-slate-700 font-sans">
+                      <td className="py-3.5 px-4 text-slate-700 font-sans font-medium">
                         {ev.transaction_id ? `${ev.transaction_id.slice(0, 14)}...` : 'System Root'}
                       </td>
                       <td className="py-3.5 px-4 text-emerald-700 text-[11px] truncate max-w-[200px]" title={ev.hash}>
-                        {ev.hash ? `${ev.hash.slice(0, 16)}...` : '0x...'}
+                        <span className="bg-emerald-50/80 border border-emerald-200 px-1.5 py-0.5 rounded text-emerald-800 font-mono">
+                          {ev.hash ? `${ev.hash.slice(0, 16)}...` : '0x...'}
+                        </span>
                       </td>
-                      <td className="py-3.5 px-4 text-slate-400 text-[11px] truncate max-w-[160px]" title={ev.prev_hash}>
-                        {ev.prev_hash ? `${ev.prev_hash.slice(0, 12)}...` : '0'}
+                      <td className="py-3.5 px-4 text-slate-500 text-[11px] truncate max-w-[160px]" title={ev.prev_hash}>
+                        <span className="bg-slate-100 border border-slate-200 px-1.5 py-0.5 rounded text-slate-600 font-mono">
+                          {ev.prev_hash ? `${ev.prev_hash.slice(0, 12)}...` : '0'}
+                        </span>
                       </td>
                     </tr>
                   ))

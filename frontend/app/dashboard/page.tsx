@@ -129,53 +129,55 @@ export default function DashboardPage() {
 
         {/* Financial Exposure & Efficiency Quick Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-gradient-to-br from-indigo-50/60 via-white to-white border border-indigo-100 rounded-2xl p-5 shadow-xs flex items-center justify-between">
+          <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs flex items-center justify-between card-hover">
             <div>
-              <div className="text-xs font-medium text-indigo-900/70 uppercase tracking-wider">
+              <div className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
                 Total Volume Audited
               </div>
-              <div className="text-2xl font-bold text-[#0F172A] mt-1 tabular-nums">
+              <div className="text-2xl font-bold text-slate-900 mt-1 tabular-nums">
                 {loading ? '--' : formatCurrency(stats?.total_amount ?? 2847392000)}
               </div>
               <div className="text-xs text-slate-500 mt-1 flex items-center gap-1">
-                <span className="text-emerald-700 font-medium">99.4% precision</span> · 10,000+ invoices
+                <span className="text-emerald-700 font-semibold bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200 text-[10px]">99.4% precision</span> · 10,000+ invoices
               </div>
             </div>
-            <div className="w-11 h-11 rounded-xl bg-indigo-100/70 text-indigo-700 flex items-center justify-center flex-shrink-0">
+            <div className="w-11 h-11 rounded-xl bg-indigo-50 border border-indigo-100 text-indigo-700 flex items-center justify-center flex-shrink-0">
               <Activity className="w-5 h-5" />
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-rose-50/60 via-white to-white border border-rose-100 rounded-2xl p-5 shadow-xs flex items-center justify-between">
+          <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs flex items-center justify-between card-hover">
             <div>
-              <div className="text-xs font-medium text-rose-900/70 uppercase tracking-wider">
+              <div className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
                 Flagged Exposure Quarantined
               </div>
               <div className="text-2xl font-bold text-rose-600 mt-1 tabular-nums">
                 {loading ? '--' : formatCurrency(stats?.flagged_amount ?? 387294000)}
               </div>
-              <div className="text-xs text-slate-500 mt-1">
-                Held before disbursement authorization
+              <div className="text-xs text-slate-500 mt-1 flex items-center gap-1">
+                <span className="text-rose-700 font-semibold bg-rose-50 px-1.5 py-0.2 rounded border border-rose-200 text-[10px]">Held</span>
+                <span>Before disbursement authorization</span>
               </div>
             </div>
-            <div className="w-11 h-11 rounded-xl bg-rose-100/70 text-rose-700 flex items-center justify-center flex-shrink-0">
+            <div className="w-11 h-11 rounded-xl bg-rose-50 border border-rose-100 text-rose-700 flex items-center justify-center flex-shrink-0">
               <XCircle className="w-5 h-5" />
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-emerald-50/60 via-white to-white border border-emerald-100 rounded-2xl p-5 shadow-xs flex items-center justify-between">
+          <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs flex items-center justify-between card-hover">
             <div>
-              <div className="text-xs font-medium text-emerald-900/70 uppercase tracking-wider">
+              <div className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
                 Autonomous Approval Ratio
               </div>
               <div className="text-2xl font-bold text-emerald-700 mt-1">
                 {loading ? '--' : `${stats?.human_attention_saved_pct ?? 88.2}%`}
               </div>
-              <div className="text-xs text-slate-500 mt-1">
-                Zero manual auditor clicks required
+              <div className="text-xs text-slate-500 mt-1 flex items-center gap-1">
+                <span className="text-emerald-700 font-semibold bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200 text-[10px]">Zero touches</span>
+                <span>Manual review eliminated</span>
               </div>
             </div>
-            <div className="w-11 h-11 rounded-xl bg-emerald-100/70 text-emerald-700 flex items-center justify-center flex-shrink-0">
+            <div className="w-11 h-11 rounded-xl bg-emerald-50 border border-emerald-100 text-emerald-700 flex items-center justify-center flex-shrink-0">
               <ShieldCheck className="w-5 h-5" />
             </div>
           </div>

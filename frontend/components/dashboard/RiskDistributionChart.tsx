@@ -46,15 +46,20 @@ export function RiskDistributionChart() {
   };
 
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm">
-      <h3 className="text-sm font-medium text-gray-400 uppercase tracking-wider mb-4">Risk Score Distribution</h3>
+    <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-xs font-semibold text-slate-600 uppercase tracking-wider">Risk Score Distribution</h3>
+        <span className="text-[11px] font-medium text-slate-500 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-md">
+          Histogram
+        </span>
+      </div>
       <ResponsiveContainer width="100%" height={180}>
         <BarChart data={data} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#F3F4F6" vertical={false} />
-          <XAxis dataKey="label" tick={{ fontSize: 10, fill: '#9CA3AF' }} axisLine={{ stroke: '#E5E7EB' }} tickLine={false} />
-          <YAxis tick={{ fontSize: 10, fill: '#9CA3AF' }} axisLine={false} tickLine={false} />
+          <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" vertical={false} />
+          <XAxis dataKey="label" tick={{ fontSize: 10, fill: '#64748B' }} axisLine={{ stroke: '#CBD5E1' }} tickLine={false} />
+          <YAxis tick={{ fontSize: 10, fill: '#64748B' }} axisLine={false} tickLine={false} />
           <Tooltip
-            contentStyle={{ background: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: 12, color: '#1F2937', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}
+            contentStyle={{ background: '#FFFFFF', border: '1px solid #CBD5E1', borderRadius: 12, color: '#0F172A', boxShadow: '0 4px 12px rgba(15,23,42,0.08)' }}
             formatter={(v) => [v, 'Transactions']}
           />
           <Bar dataKey="count" radius={[6, 6, 0, 0]}>
@@ -66,20 +71,20 @@ export function RiskDistributionChart() {
       </ResponsiveContainer>
 
       {categories.length > 0 && (
-        <div className="mt-5 border-t border-gray-100 pt-4">
-          <div className="text-xs text-gray-400 mb-3 uppercase tracking-wider">Top Risk Categories</div>
-          <div className="space-y-2.5">
+        <div className="mt-5 bg-slate-50/80 border border-slate-200/80 rounded-xl p-3.5">
+          <div className="text-[11px] font-semibold text-slate-600 mb-2.5 uppercase tracking-wider">Top Risk Categories</div>
+          <div className="space-y-2">
             {categories.map((cat, i) => (
-              <div key={i} className="flex items-center justify-between">
-                <span className="text-xs text-gray-600">{cat.category}</span>
+              <div key={i} className="flex items-center justify-between text-xs">
+                <span className="font-medium text-slate-700">{cat.category}</span>
                 <div className="flex items-center gap-2">
-                  <div className="w-24 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                  <div className="w-24 h-1.5 bg-slate-200 rounded-full overflow-hidden">
                     <div
-                      className="h-full rounded-full bg-amber-400"
+                      className="h-full rounded-full bg-amber-500"
                       style={{ width: `${Math.min(100, (cat.count / (categories[0]?.count || 1)) * 100)}%` }}
                     />
                   </div>
-                  <span className="text-xs text-gray-400 w-8 text-right tabular-nums">{cat.count}</span>
+                  <span className="text-slate-500 font-mono w-8 text-right tabular-nums">{cat.count}</span>
                 </div>
               </div>
             ))}

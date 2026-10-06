@@ -2,11 +2,11 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-background: #F8FAFC;
+  --color-background: #F1F5F9;
   --color-foreground: #0F172A;
   --color-sentinel-navy: #0F172A;
   --color-sentinel-indigo: #4F46E5;
-  --color-sentinel-canvas: #F8FAFC;
+  --color-sentinel-canvas: #F1F5F9;
   --color-sentinel-card: #FFFFFF;
   --color-sentinel-border: #E2E8F0;
   --color-sentinel-warning: #D97706;
@@ -24,7 +24,7 @@ html {
 }
 
 body {
-  background: #F8FAFC;
+  background: #F1F5F9;
   color: #0F172A;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;

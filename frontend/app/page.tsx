@@ -126,9 +126,9 @@ export default function LandingPage() {
   const activeData = featurePillars[activeFeatureTab];
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-[#0F172A] selection:bg-indigo-100 selection:text-indigo-900 font-sans">
+    <div className="min-h-screen bg-slate-100 text-[#0F172A] selection:bg-indigo-100 selection:text-indigo-900 font-sans">
       {/* 1. Header / Navbar (Dext & Ramp inspired) */}
-      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200">
+      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-2xs">
         <div className="max-w-7xl mx-auto px-6 h-18 flex items-center justify-between">
           {/* Brand */}
           <Link href="/" className="flex items-center gap-3 group">
@@ -181,8 +181,8 @@ export default function LandingPage() {
         </div>
       </header>
 
-      {/* 2. Dext-style Split Hero Section */}
-      <section className="pt-12 pb-20 lg:pt-16 lg:pb-24 overflow-hidden bg-white border-b border-slate-200">
+      {/* 2. Dext-style Split Hero Section with Slate Shading */}
+      <section className="pt-12 pb-20 lg:pt-16 lg:pb-24 overflow-hidden bg-gradient-to-b from-slate-100 via-slate-50 to-white border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
             {/* Left Column: Big punchy typography & Dext bullet points */}
@@ -313,10 +313,10 @@ export default function LandingPage() {
       </section>
 
       {/* 4. BILL-Style "How Can We Help?" Segmented Interactive Showcase */}
-      <section id="features" className="py-20 bg-white">
+      <section id="features" className="py-20 bg-slate-100/70 border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center max-w-2xl mx-auto mb-12">
-            <span className="text-xs font-bold uppercase tracking-wider text-indigo-700 bg-indigo-50 border border-indigo-100 px-3 py-1 rounded-full">
+            <span className="text-xs font-bold uppercase tracking-wider text-indigo-700 bg-white border border-slate-200 px-3 py-1 rounded-full shadow-2xs">
               Enterprise Risk Defense Suite
             </span>
             <h2 className="text-3xl sm:text-4xl font-black text-[#0F172A] tracking-tight mt-3">
@@ -328,43 +328,43 @@ export default function LandingPage() {
           </div>
 
           {/* BILL-style clickable category pills */}
-          <div className="flex flex-wrap items-center justify-center gap-2 mb-12">
+          <div className="flex flex-wrap items-center justify-center gap-2.5 mb-12">
             <button
               onClick={() => setActiveFeatureTab('duplicate')}
-              className={`px-5 py-2.5 rounded-full text-xs font-bold transition-all ${
+              className={`px-5 py-2.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
                 activeFeatureTab === 'duplicate'
-                  ? 'bg-indigo-600 text-white shadow-sm'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  ? 'bg-indigo-600 text-white shadow-xs'
+                  : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
               }`}
             >
               1. Duplicate Invoice Interception
             </button>
             <button
               onClick={() => setActiveFeatureTab('behavioral')}
-              className={`px-5 py-2.5 rounded-full text-xs font-bold transition-all ${
+              className={`px-5 py-2.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
                 activeFeatureTab === 'behavioral'
-                  ? 'bg-indigo-600 text-white shadow-sm'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  ? 'bg-indigo-600 text-white shadow-xs'
+                  : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
               }`}
             >
               2. Behavioral ML & Variance
             </button>
             <button
               onClick={() => setActiveFeatureTab('policy')}
-              className={`px-5 py-2.5 rounded-full text-xs font-bold transition-all ${
+              className={`px-5 py-2.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
                 activeFeatureTab === 'policy'
-                  ? 'bg-indigo-600 text-white shadow-sm'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  ? 'bg-indigo-600 text-white shadow-xs'
+                  : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
               }`}
             >
               3. Policy Enforcement & Split-PO
             </button>
             <button
               onClick={() => setActiveFeatureTab('blockchain')}
-              className={`px-5 py-2.5 rounded-full text-xs font-bold transition-all ${
+              className={`px-5 py-2.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
                 activeFeatureTab === 'blockchain'
-                  ? 'bg-indigo-600 text-white shadow-sm'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  ? 'bg-indigo-600 text-white shadow-xs'
+                  : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
               }`}
             >
               4. Solana Cryptographic Ledger
@@ -372,7 +372,7 @@ export default function LandingPage() {
           </div>
 
           {/* Interactive Feature Panel */}
-          <div className="bg-[#F8FAFC] border border-slate-200 rounded-3xl p-8 lg:p-12 shadow-sm max-w-5xl mx-auto">
+          <div className="bg-white border border-slate-200 rounded-3xl p-8 lg:p-12 shadow-sm max-w-5xl mx-auto">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
               {/* Feature Content */}
               <div className="lg:col-span-7">
@@ -415,9 +415,9 @@ export default function LandingPage() {
 
               {/* Feature Simulated Output Card */}
               <div className="lg:col-span-5">
-                <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-                  <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
-                    <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                <div className="bg-slate-50/90 border border-slate-200 rounded-2xl p-6 shadow-2xs">
+                  <div className="flex items-center justify-between border-b border-slate-200 pb-3 mb-4">
+                    <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
                       Live Telemetry Output
                     </span>
                     <span className="text-xs font-bold text-rose-700 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded">
@@ -427,11 +427,11 @@ export default function LandingPage() {
 
                   <div className="space-y-3">
                     <div>
-                      <div className="text-xs text-slate-400">Subject Invoice</div>
+                      <div className="text-xs text-slate-500">Subject Invoice</div>
                       <div className="text-sm font-bold text-[#0F172A]">{activeData.mockInvoice}</div>
                     </div>
 
-                    <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-600 leading-relaxed">
+                    <div className="bg-white border border-slate-200 rounded-xl p-3 text-xs text-slate-600 leading-relaxed shadow-2xs">
                       <div className="font-semibold text-slate-800 mb-1">{activeData.mockHeader}:</div>
                       {activeData.mockDetails}
                     </div>
@@ -452,10 +452,10 @@ export default function LandingPage() {
       </section>
 
       {/* 5. End-to-End Lifecycle Flow */}
-      <section id="how-it-works" className="py-20 bg-[#F8FAFC] border-t border-slate-200">
+      <section id="how-it-works" className="py-20 bg-white border-t border-slate-200">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center max-w-2xl mx-auto mb-16">
-            <span className="text-xs font-bold uppercase tracking-wider text-indigo-700 bg-indigo-50 border border-indigo-100 px-3 py-1 rounded-full">
+            <span className="text-xs font-bold uppercase tracking-wider text-indigo-700 bg-slate-100 border border-slate-200 px-3 py-1 rounded-full">
               Seamless 4-Stage Lifecycle
             </span>
             <h2 className="text-3xl sm:text-4xl font-black text-[#0F172A] tracking-tight mt-3">
@@ -467,8 +467,8 @@ export default function LandingPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs relative card-hover">
-              <div className="w-10 h-10 rounded-xl bg-slate-100 text-slate-900 flex items-center justify-center font-black text-sm mb-4">
+            <div className="bg-slate-50/80 hover:bg-white border border-slate-200 rounded-2xl p-6 shadow-xs relative card-hover transition-all">
+              <div className="w-10 h-10 rounded-xl bg-white border border-slate-200 text-slate-900 flex items-center justify-center font-black text-sm mb-4 shadow-2xs">
                 01
               </div>
               <h4 className="text-base font-bold text-[#0F172A] mb-2">ERP Ingestion</h4>
@@ -477,8 +477,8 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs relative card-hover">
-              <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-100 flex items-center justify-center font-black text-sm mb-4">
+            <div className="bg-slate-50/80 hover:bg-white border border-slate-200 rounded-2xl p-6 shadow-xs relative card-hover transition-all">
+              <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-200 flex items-center justify-center font-black text-sm mb-4 shadow-2xs">
                 02
               </div>
               <h4 className="text-base font-bold text-[#0F172A] mb-2">Parallel AI Scoring</h4>
@@ -487,8 +487,8 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs relative card-hover">
-              <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-700 border border-purple-100 flex items-center justify-center font-black text-sm mb-4">
+            <div className="bg-slate-50/80 hover:bg-white border border-slate-200 rounded-2xl p-6 shadow-xs relative card-hover transition-all">
+              <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-700 border border-purple-200 flex items-center justify-center font-black text-sm mb-4 shadow-2xs">
                 03
               </div>
               <h4 className="text-base font-bold text-[#0F172A] mb-2">Autonomous Triage</h4>
@@ -497,8 +497,8 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs relative card-hover">
-              <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-100 flex items-center justify-center font-black text-sm mb-4">
+            <div className="bg-slate-50/80 hover:bg-white border border-slate-200 rounded-2xl p-6 shadow-xs relative card-hover transition-all">
+              <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center justify-center font-black text-sm mb-4 shadow-2xs">
                 04
               </div>
               <h4 className="text-base font-bold text-[#0F172A] mb-2">Solana Block Seal</h4>
@@ -511,7 +511,7 @@ export default function LandingPage() {
       </section>
 
       {/* 6. ERP Integrations Bar */}
-      <section id="integrations" className="py-14 bg-white border-t border-slate-200 text-center">
+      <section id="integrations" className="py-14 bg-slate-100/80 border-t border-slate-200 text-center">
         <div className="max-w-7xl mx-auto px-6">
           <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-6">
             Engineered to integrate seamlessly with standard accounting & ERP infrastructure

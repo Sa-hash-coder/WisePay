@@ -80,19 +80,21 @@ export function NetworkGraph() {
   const maxWeight = Math.max(...edges.map(e => e.weight), 1);
 
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm">
+    <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-medium text-gray-400 uppercase tracking-wider">Relationship Anomaly Map</h3>
-        <span className="text-[10px] text-gray-400 bg-gray-50 px-2 py-0.5 rounded-md border border-gray-100">Flagged transactions only</span>
+        <h3 className="text-xs font-semibold text-slate-600 uppercase tracking-wider">Relationship Anomaly Map</h3>
+        <span className="text-[10px] text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200 font-medium">
+          Flagged transactions only
+        </span>
       </div>
       
       <svg ref={svgRef} width="100%" viewBox="0 0 340 200" className="overflow-visible">
         {/* Grid line */}
-        <line x1="170" y1="0" x2="170" y2="200" stroke="#F3F4F6" strokeWidth="0.5" strokeDasharray="4 4" />
+        <line x1="170" y1="0" x2="170" y2="200" stroke="#E2E8F0" strokeWidth="0.5" strokeDasharray="4 4" />
         
         {/* Column labels */}
-        <text x="80" y="15" textAnchor="middle" fill="#9CA3AF" fontSize="9" fontFamily="system-ui">EMPLOYEES</text>
-        <text x="260" y="15" textAnchor="middle" fill="#9CA3AF" fontSize="9" fontFamily="system-ui">VENDORS</text>
+        <text x="80" y="15" textAnchor="middle" fill="#64748B" fontSize="9" fontWeight="600" fontFamily="system-ui">EMPLOYEES</text>
+        <text x="260" y="15" textAnchor="middle" fill="#64748B" fontSize="9" fontWeight="600" fontFamily="system-ui">VENDORS</text>
         
         {/* Edges */}
         {edges.map((edge, i) => {
@@ -142,7 +144,7 @@ export function NetworkGraph() {
             />
             <text
               x={node.x} y={node.y! - 14}
-              textAnchor="middle" fill="#6B7280" fontSize="8"
+              textAnchor="middle" fill="#475569" fontSize="8" fontWeight="500"
               className="select-none"
             >
               {node.label.length > 14 ? node.label.slice(0, 12) + '…' : node.label}
@@ -151,15 +153,15 @@ export function NetworkGraph() {
         ))}
       </svg>
       
-      <div className="flex items-center gap-6 mt-3 pt-3 border-t border-gray-100">
-        <div className="flex items-center gap-1.5 text-xs text-gray-400">
+      <div className="flex items-center gap-6 mt-3 p-2.5 bg-slate-50/80 border border-slate-200/80 rounded-xl">
+        <div className="flex items-center gap-1.5 text-xs text-slate-600 font-medium">
           <span className="w-2 h-2 rounded-full bg-indigo-500" /> Employees
         </div>
-        <div className="flex items-center gap-1.5 text-xs text-gray-400">
+        <div className="flex items-center gap-1.5 text-xs text-slate-600 font-medium">
           <span className="w-2 h-2 rounded-full bg-violet-500" /> Vendors
         </div>
-        <div className="flex items-center gap-1.5 text-xs text-gray-400">
-          <div className="w-4 h-0.5 bg-red-500" style={{borderTop: '1px dashed #DC2626'}} /> Anomalous cluster
+        <div className="flex items-center gap-1.5 text-xs text-rose-700 font-medium">
+          <div className="w-4 h-0.5 bg-rose-500" style={{borderTop: '1px dashed #DC2626'}} /> Anomalous cluster
         </div>
       </div>
     </div>

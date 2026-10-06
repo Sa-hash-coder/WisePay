@@ -147,30 +147,26 @@ export default function InvestigatePage() {
           </div>
 
           {/* Meters */}
-          <div className="flex items-center gap-6 bg-slate-50 p-4 rounded-2xl border border-slate-200 self-start lg:self-auto">
+          <div className="flex items-center gap-6 bg-slate-100/80 p-4 rounded-2xl border border-slate-200 self-start lg:self-auto">
             <ConfidenceMeter confidence={tx.confidence} />
-            <div className="w-px h-16 bg-slate-200" />
+            <div className="w-px h-16 bg-slate-300" />
             <RiskGauge score={tx.risk_score} />
           </div>
         </div>
 
-        {/* Tabs */}
-        <div className="flex items-center gap-1 border-b border-slate-200 overflow-x-auto">
+        {/* Tabs Bar with Greyish Pill Track */}
+        <div className="flex items-center gap-1.5 p-1.5 bg-slate-200/70 border border-slate-300/80 rounded-2xl overflow-x-auto">
           {TABS.map(tab => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-4 py-3 text-xs font-bold uppercase tracking-wider transition-colors relative flex-shrink-0 cursor-pointer ${
-                activeTab === tab ? 'text-indigo-600' : 'text-slate-500 hover:text-slate-900'
+              className={`px-3.5 py-2 text-xs font-bold uppercase tracking-wider rounded-xl transition-all flex-shrink-0 cursor-pointer ${
+                activeTab === tab 
+                  ? 'bg-white text-indigo-700 shadow-xs border border-slate-200' 
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-300/50'
               }`}
             >
               {tab}
-              {activeTab === tab && (
-                <motion.div 
-                  layoutId="activeTabIndicator"
-                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-600 shadow-xs" 
-                />
-              )}
             </button>
           ))}
         </div>

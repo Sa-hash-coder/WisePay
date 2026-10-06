@@ -17,45 +17,47 @@ export function AttentionSavedGauge({ percentage, loading }: AttentionSavedGauge
   }, [percentage, loading]);
 
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm h-full">
-      <div className="flex items-center justify-between mb-5">
-        <div>
-          <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider">Human Attention Saved</h3>
-          <p className="text-xs text-gray-400 mt-0.5">Transactions requiring zero human intervention</p>
-        </div>
-        <div className="text-right">
-          <div className="text-4xl font-bold text-emerald-600">
-            {loading ? '--' : <AnimatedCounter value={Math.round(percentage)} />}%
+    <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs h-full flex flex-col justify-between">
+      <div>
+        <div className="flex items-center justify-between mb-5">
+          <div>
+            <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wider">Human Attention Saved</h3>
+            <p className="text-xs text-slate-500 mt-0.5">Transactions requiring zero human intervention</p>
           </div>
-          <div className="text-xs text-gray-400 mt-1">of all transactions</div>
+          <div className="text-right">
+            <div className="text-4xl font-extrabold text-emerald-600 tracking-tight">
+              {loading ? '--' : <AnimatedCounter value={Math.round(percentage)} />}%
+            </div>
+            <div className="text-xs text-slate-400 mt-0.5">of all transactions</div>
+          </div>
         </div>
-      </div>
-      
-      {/* Progress bar */}
-      <div className="relative h-3 bg-gray-100 rounded-full overflow-hidden">
-        <div
-          className="absolute inset-y-0 left-0 rounded-full"
-          style={{
-            width: `${animated}%`,
-            background: 'linear-gradient(90deg, #059669, #34D399)',
-            transition: 'width 2s cubic-bezier(0.34, 1.56, 0.64, 1)',
-          }}
-        />
+        
+        {/* Progress bar */}
+        <div className="relative h-3.5 bg-slate-200 rounded-full overflow-hidden shadow-inner">
+          <div
+            className="absolute inset-y-0 left-0 rounded-full shadow-xs"
+            style={{
+              width: `${animated}%`,
+              background: 'linear-gradient(90deg, #059669, #10B981)',
+              transition: 'width 2s cubic-bezier(0.34, 1.56, 0.64, 1)',
+            }}
+          />
+        </div>
       </div>
       
       {/* Sub-metrics */}
-      <div className="flex items-center gap-6 mt-5">
-        <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center gap-3 mt-5 pt-4 border-t border-slate-100">
+        <div className="flex items-center gap-2 bg-slate-50 border border-slate-200/60 px-2.5 py-1 rounded-lg">
           <div className="w-2 h-2 rounded-full bg-emerald-500" />
-          <span className="text-xs text-gray-500">Auto-approved without review</span>
+          <span className="text-xs font-medium text-slate-600">Auto-approved</span>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 bg-slate-50 border border-slate-200/60 px-2.5 py-1 rounded-lg">
           <div className="w-2 h-2 rounded-full bg-amber-500" />
-          <span className="text-xs text-gray-500">Escalated to humans</span>
+          <span className="text-xs font-medium text-slate-600">Human escalation</span>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-red-500" />
-          <span className="text-xs text-gray-500">High-risk holds</span>
+        <div className="flex items-center gap-2 bg-slate-50 border border-slate-200/60 px-2.5 py-1 rounded-lg">
+          <div className="w-2 h-2 rounded-full bg-rose-500" />
+          <span className="text-xs font-medium text-slate-600">High-risk holds</span>
         </div>
       </div>
     </div>

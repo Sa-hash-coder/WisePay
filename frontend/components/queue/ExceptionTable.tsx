@@ -70,25 +70,25 @@ export function ExceptionTable() {
 
   return (
     <div className="bg-white border border-slate-200 rounded-2xl shadow-xs p-6 flex flex-col gap-5">
-      {/* Top Filter and Search Bar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      {/* Top Filter and Search Bar in Greyish Panel */}
+      <div className="bg-slate-50/90 border border-slate-200/90 rounded-xl p-3.5 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex flex-wrap items-center gap-2">
           <button 
             onClick={() => { setFilter('ALL'); setPage(1); }}
-            className={`px-3 py-1.5 rounded-xl text-xs font-semibold uppercase tracking-wider transition-all flex items-center gap-1.5 cursor-pointer ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all flex items-center gap-1.5 cursor-pointer ${
               filter === 'ALL' 
                 ? 'bg-indigo-600 text-white shadow-xs' 
-                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-100'
             }`}
           >
             All Exceptions
           </button>
           <button 
             onClick={() => { setFilter('HIGH_RISK'); setPage(1); }}
-            className={`px-3 py-1.5 rounded-xl text-xs font-semibold uppercase tracking-wider transition-all flex items-center gap-1.5 cursor-pointer ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all flex items-center gap-1.5 cursor-pointer ${
               filter === 'HIGH_RISK' 
                 ? 'bg-rose-600 text-white shadow-xs' 
-                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-100'
             }`}
           >
             <ShieldAlert className="w-3.5 h-3.5" />
@@ -96,10 +96,10 @@ export function ExceptionTable() {
           </button>
           <button 
             onClick={() => { setFilter('HUMAN_REVIEW'); setPage(1); }}
-            className={`px-3 py-1.5 rounded-xl text-xs font-semibold uppercase tracking-wider transition-all flex items-center gap-1.5 cursor-pointer ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all flex items-center gap-1.5 cursor-pointer ${
               filter === 'HUMAN_REVIEW' 
                 ? 'bg-amber-600 text-white shadow-xs' 
-                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-100'
             }`}
           >
             <AlertTriangle className="w-3.5 h-3.5" />
@@ -111,7 +111,7 @@ export function ExceptionTable() {
             <>
               <button 
                 onClick={() => { setFilter('UNDER_LIMIT'); setPage(1); }}
-                className={`px-3 py-1.5 rounded-xl text-xs font-semibold uppercase tracking-wider transition-all flex items-center gap-1.5 cursor-pointer ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all flex items-center gap-1.5 cursor-pointer ${
                   filter === 'UNDER_LIMIT' 
                     ? 'bg-sky-600 text-white shadow-xs' 
                     : 'bg-sky-50 text-sky-700 hover:bg-sky-100 border border-sky-200'
@@ -122,7 +122,7 @@ export function ExceptionTable() {
               </button>
               <button 
                 onClick={() => { setFilter('OVER_LIMIT'); setPage(1); }}
-                className={`px-3 py-1.5 rounded-xl text-xs font-semibold uppercase tracking-wider transition-all flex items-center gap-1.5 cursor-pointer ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all flex items-center gap-1.5 cursor-pointer ${
                   filter === 'OVER_LIMIT' 
                     ? 'bg-purple-600 text-white shadow-xs' 
                     : 'bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-200'
@@ -136,10 +136,10 @@ export function ExceptionTable() {
 
           <button 
             onClick={() => { setFilter('AUTO_PASS'); setPage(1); }}
-            className={`px-3 py-1.5 rounded-xl text-xs font-semibold uppercase tracking-wider transition-all flex items-center gap-1.5 cursor-pointer ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all flex items-center gap-1.5 cursor-pointer ${
               filter === 'AUTO_PASS' 
                 ? 'bg-emerald-600 text-white shadow-xs' 
-                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-100'
             }`}
           >
             <ShieldCheck className="w-3.5 h-3.5" />
@@ -155,13 +155,13 @@ export function ExceptionTable() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search vendor, invoice, submitter..." 
-              className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:bg-white transition-all"
+              className="w-full pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all shadow-2xs"
             />
           </div>
           <button
             onClick={fetchTransactions}
             title="Refresh queue"
-            className="p-2 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl text-slate-500 hover:text-slate-900 transition-colors shadow-2xs cursor-pointer"
+            className="p-2 bg-white hover:bg-slate-100 border border-slate-200 rounded-xl text-slate-600 hover:text-slate-900 transition-colors shadow-2xs cursor-pointer"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-indigo-600' : ''}`} />
           </button>
@@ -169,14 +169,14 @@ export function ExceptionTable() {
       </div>
 
       {/* Role Context Bar */}
-      <div className="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between text-xs">
-        <div className="flex items-center gap-2 text-slate-600">
-          <UserCheck className="w-4 h-4 text-slate-400" />
-          <span>Active Clearance: <strong className="text-slate-800">{role}</strong></span>
+      <div className="px-4 py-2.5 bg-slate-100/70 border border-slate-200/90 rounded-xl flex items-center justify-between text-xs">
+        <div className="flex items-center gap-2 text-slate-700">
+          <UserCheck className="w-4 h-4 text-indigo-600" />
+          <span>Active Clearance: <strong className="text-slate-900">{role}</strong></span>
           <span className="text-slate-300">|</span>
-          <span className="text-slate-500">{roleConfig.department}</span>
+          <span className="text-slate-600">{roleConfig.department}</span>
         </div>
-        <div className="text-[11px] text-slate-500">
+        <div className="text-[11px] text-slate-600 font-medium">
           {role === 'AP / FINANCE REVIEWER' && 'Threshold: Invoices up to ₹5,00,000'}
           {role === 'FINANCE MANAGER' && 'Full Authority: High-risk overrides enabled'}
           {role === 'AUDITOR' && 'Read-Only: Segregation of duties oversight'}
@@ -187,15 +187,15 @@ export function ExceptionTable() {
       <div className="overflow-x-auto rounded-xl border border-slate-200">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="border-b border-slate-200 bg-slate-50/70 text-slate-500 text-xs uppercase tracking-wider">
-              <th className="py-3 px-4 font-semibold">Invoice & Date</th>
-              <th className="py-3 px-4 font-semibold">Vendor</th>
-              <th className="py-3 px-4 font-semibold">Employee / Dept</th>
-              <th className="py-3 px-4 font-semibold">Amount</th>
-              <th className="py-3 px-4 font-semibold">Risk Score</th>
-              <th className="py-3 px-4 font-semibold">Confidence</th>
-              <th className="py-3 px-4 font-semibold">Decision</th>
-              <th className="py-3 px-4 font-semibold text-right">Action</th>
+            <tr className="border-b border-slate-200 bg-slate-100 text-slate-700 text-xs uppercase tracking-wider">
+              <th className="py-3 px-4 font-bold">Invoice & Date</th>
+              <th className="py-3 px-4 font-bold">Vendor</th>
+              <th className="py-3 px-4 font-bold">Employee / Dept</th>
+              <th className="py-3 px-4 font-bold">Amount</th>
+              <th className="py-3 px-4 font-bold">Risk Score</th>
+              <th className="py-3 px-4 font-bold">Confidence</th>
+              <th className="py-3 px-4 font-bold">Decision</th>
+              <th className="py-3 px-4 font-bold text-right">Action</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100 text-sm">

@@ -48,28 +48,28 @@ export function ProcessingStream() {
   }, [transactions]);
 
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl h-full flex flex-col overflow-hidden shadow-sm">
-      <div className="px-5 py-3.5 border-b border-gray-100 flex items-center justify-between flex-shrink-0">
-        <h3 className="text-xs font-medium text-gray-400 uppercase tracking-wider">Processing Stream</h3>
-        <div className="flex items-center gap-1.5 text-xs text-emerald-600 font-medium">
+    <div className="bg-white border border-slate-200 rounded-2xl h-full flex flex-col overflow-hidden shadow-xs">
+      <div className="px-5 py-3.5 bg-slate-50/90 border-b border-slate-200 flex items-center justify-between flex-shrink-0">
+        <h3 className="text-xs font-semibold text-slate-600 uppercase tracking-wider">Processing Stream</h3>
+        <div className="flex items-center gap-1.5 text-xs text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
           Live
         </div>
       </div>
-      <div className="flex-1 overflow-hidden px-4 py-2 space-y-0.5">
+      <div className="flex-1 overflow-hidden px-3 py-2 space-y-1">
         {visible.map((txn, i) => (
           <div
             key={`${txn.id}-${i}`}
-            className="flex items-center gap-2.5 py-1.5 text-xs transition-all duration-500"
-            style={{ opacity: i === 0 ? 0.4 : 1 }}
+            className="flex items-center gap-2.5 py-1.5 px-2 rounded-lg text-xs transition-all duration-300 even:bg-slate-50/70 hover:bg-slate-100/80"
+            style={{ opacity: i === 0 ? 0.5 : 1 }}
           >
             <span
-              className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+              className="w-2 h-2 rounded-full flex-shrink-0"
               style={{ background: DECISION_COLORS[txn.decision] || '#9CA3AF' }}
             />
-            <span className="text-gray-400 font-mono w-20 flex-shrink-0 truncate">{txn.invoice_id}</span>
-            <span className="text-gray-700 flex-1 truncate">{txn.vendor_name}</span>
-            <span className="text-gray-500 text-right flex-shrink-0 tabular-nums">
+            <span className="text-slate-500 font-mono text-[11px] w-20 flex-shrink-0 truncate">{txn.invoice_id}</span>
+            <span className="text-slate-800 font-medium flex-1 truncate">{txn.vendor_name}</span>
+            <span className="text-slate-600 font-medium text-right flex-shrink-0 tabular-nums">
               {formatCurrency(txn.amount)}
             </span>
           </div>
