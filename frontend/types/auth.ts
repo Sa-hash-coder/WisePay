@@ -58,7 +58,7 @@ export const ROLE_CONFIGS: Record<UserRole, RoleConfig> = {
     },
     defaultUser: {
       name: 'Priya Sharma',
-      email: 'priya.sharma@sentinel.internal',
+      email: 'priya.sharma@wisepay.internal',
       role: 'AP / FINANCE REVIEWER',
       organization: 'Global Enterprise Corp',
     },
@@ -86,7 +86,7 @@ export const ROLE_CONFIGS: Record<UserRole, RoleConfig> = {
     },
     defaultUser: {
       name: 'Marcus Vance',
-      email: 'marcus.vance@sentinel.internal',
+      email: 'marcus.vance@wisepay.internal',
       role: 'FINANCE MANAGER',
       organization: 'Global Enterprise Corp',
     },

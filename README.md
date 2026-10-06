@@ -1,4 +1,4 @@
-# SENTINEL — Financial Risk Intelligence Platform
+# WisePay — Financial Risk Intelligence Platform
 
 > **"Don't automate humans. Automate everything that wastes human attention."**
 

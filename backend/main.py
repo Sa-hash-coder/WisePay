@@ -6,7 +6,7 @@ from database import engine, Base, SessionLocal
 from routers import dashboard, transactions, investigation, audit, feedback
 from data.seed import seed_database
 
-app = FastAPI(title="SENTINEL API", version="1.0.0")
+app = FastAPI(title="WisePay API", version="1.0.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -25,7 +25,7 @@ app.include_router(feedback.router)
 
 @app.on_event("startup")
 def on_startup():
-    print("Starting up...")
+    print("Starting up WisePay...")
     Base.metadata.create_all(bind=engine)
     
     db = SessionLocal()
@@ -37,4 +37,4 @@ def on_startup():
 
 @app.get("/")
 def read_root():
-    return {"message": "Welcome to SENTINEL API"}
+    return {"message": "Welcome to WisePay API"}

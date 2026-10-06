@@ -37,7 +37,7 @@ export function TopBar() {
       <div className="flex items-center gap-3">
         <div className="flex items-center gap-2 text-xs font-medium">
           <Link href="/" className="text-slate-400 hover:text-indigo-600 transition-colors">
-            SENTINEL
+            WisePay
           </Link>
           <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
           <span className="text-[#0F172A] font-semibold">{getPageTitle()}</span>

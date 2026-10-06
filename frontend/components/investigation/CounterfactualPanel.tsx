@@ -53,7 +53,7 @@ export function CounterfactualPanel({ currentRiskScore, steps }: CounterfactualP
             Counterfactual Remediation Engine · &ldquo;What Would Make This Safe?&rdquo;
           </h4>
           <p className="text-xs text-slate-600 mt-1 leading-relaxed">
-            Rather than acting as a blunt blocking detector, SENTINEL computes actionable steps based on underlying mathematical scoring weights to guide submitters and reviewers towards policy compliance.
+            Rather than acting as a blunt blocking detector, WisePay computes actionable steps based on underlying mathematical scoring weights to guide submitters and reviewers towards policy compliance.
           </p>
         </div>
       </div>

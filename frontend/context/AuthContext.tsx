@@ -20,7 +20,7 @@ interface AuthContextValue {
   isAuditor: boolean;
 }
 
-const STORAGE_KEY = 'sentinel_user';
+const STORAGE_KEY = 'wisepay_user';
 
 // Default role is AP / FINANCE REVIEWER for primary review operations
 const DEFAULT_ROLE: UserRole = 'AP / FINANCE REVIEWER';

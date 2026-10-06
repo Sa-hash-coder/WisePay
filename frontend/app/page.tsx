@@ -56,7 +56,7 @@ export default function LandingPage() {
     duplicate: {
       badge: 'DUPLICATE RADAR',
       title: 'Intercept near-duplicate invoices before disbursement',
-      description: 'Human reviewers miss altered invoice numbers (e.g. INV-1002 vs INV-1002A) and split payments across departments. SENTINEL scans both exact PO references and semantic TF-IDF text similarity in under 20ms.',
+      description: 'Human reviewers miss altered invoice numbers (e.g. INV-1002 vs INV-1002A) and split payments across departments. WisePay scans both exact PO references and semantic TF-IDF text similarity in under 20ms.',
       bullets: [
         'Lexical and numeric fuzzy parity checks',
         'Automatic cross-department PO reference matching',
@@ -73,7 +73,7 @@ export default function LandingPage() {
     behavioral: {
       badge: 'BEHAVIORAL ML',
       title: 'Flag statistical anomalies with Isolation Forest models',
-      description: 'Vendor invoice amounts drift over time. SENTINEL computes a running 6-month statistical profile per supplier and employee submitter, catching price creep and abnormal spikes before approvals.',
+      description: 'Vendor invoice amounts drift over time. WisePay computes a running 6-month statistical profile per supplier and employee submitter, catching price creep and abnormal spikes before approvals.',
       bullets: [
         'Z-score deviation calculated against multi-month baselines',
         'Submissions outside approved procurement windows',
@@ -107,7 +107,7 @@ export default function LandingPage() {
     blockchain: {
       badge: 'SOLANA AUDIT LEDGER',
       title: 'Anchor every decision to an immutable cryptographic chain',
-      description: 'External auditors and regulatory bodies demand tamper-evident proof. For every AI classification and human override, SENTINEL hashes the payload with SHA-256 and commits it directly to Solana.',
+      description: 'External auditors and regulatory bodies demand tamper-evident proof. For every AI classification and human override, WisePay hashes the payload with SHA-256 and commits it directly to Solana.',
       bullets: [
         'Sequential SHA-256 block hash linking (prev_hash validation)',
         'Zero possibility of retrospective ledger manipulation or collusion',
@@ -137,7 +137,7 @@ export default function LandingPage() {
             </div>
             <div>
               <div className="text-xl font-black text-[#0F172A] tracking-tight leading-none">
-                SENTINEL
+                WisePay
               </div>
               <div className="text-[10px] text-slate-400 font-bold tracking-wider mt-0.5">
                 FINANCIAL RISK INTELLIGENCE
@@ -286,7 +286,7 @@ export default function LandingPage() {
                 The Shift From Sampling to 100% Audit
               </div>
               <h3 className="text-2xl sm:text-3xl font-black tracking-tight text-white max-w-xl">
-                Traditional ERPs sample 5% of invoices. SENTINEL audits 100% before money leaves.
+                Traditional ERPs sample 5% of invoices. WisePay audits 100% before money leaves.
               </h3>
             </div>
 
@@ -320,7 +320,7 @@ export default function LandingPage() {
               Enterprise Risk Defense Suite
             </span>
             <h2 className="text-3xl sm:text-4xl font-black text-[#0F172A] tracking-tight mt-3">
-              How does SENTINEL protect your AP operations?
+              How does WisePay protect your AP operations?
             </h2>
             <p className="text-slate-600 text-sm mt-2">
               Select an operational layer below to see how our multi-engine system catches leakages that ERPs miss.
@@ -459,7 +459,7 @@ export default function LandingPage() {
               Seamless 4-Stage Lifecycle
             </span>
             <h2 className="text-3xl sm:text-4xl font-black text-[#0F172A] tracking-tight mt-3">
-              How Invoices Flow Through SENTINEL
+              How Invoices Flow Through WisePay
             </h2>
             <p className="text-slate-600 text-sm mt-2">
               Plugs into your enterprise ERP via REST API or batch webhook without disrupting existing accounting cycles.
@@ -570,7 +570,7 @@ export default function LandingPage() {
               <Shield className="w-4 h-4" />
             </div>
             <div>
-              <span className="font-bold text-white text-sm">SENTINEL</span>
+              <span className="font-bold text-white text-sm">WisePay</span>
               <span className="text-slate-500 ml-2">© 2026 Financial Risk Intelligence Platform</span>
             </div>
           </div>

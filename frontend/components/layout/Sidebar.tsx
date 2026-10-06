@@ -23,7 +23,7 @@ export function Sidebar() {
             <Shield className="w-4 h-4 text-white" />
           </div>
           <div>
-            <div className="text-sm font-bold text-[#0F172A] tracking-wide">SENTINEL</div>
+            <div className="text-sm font-bold text-[#0F172A] tracking-wide">WisePay</div>
             <div className="text-[10px] text-slate-400 tracking-wider">RISK INTELLIGENCE</div>
           </div>
         </Link>

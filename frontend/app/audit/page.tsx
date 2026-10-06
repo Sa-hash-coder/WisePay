@@ -114,8 +114,8 @@ export default function AuditPage() {
             <ChainIcon className="w-5 h-5 text-indigo-600" />
           </div>
           <div className="text-xs text-slate-600 leading-relaxed">
-            <span className="font-bold text-slate-900">How SENTINEL Blockchain Verification Works: </span>
-            Full invoice records and private employee documents are preserved in the enterprise database. For every evaluation or human action, SENTINEL generates a structured event payload, computes its SHA-256 hash combined with the previous block&apos;s hash (<span className="font-mono text-indigo-700 font-semibold bg-slate-100 px-1 py-0.2 rounded border border-slate-200">prev_hash</span>), and anchors it into an immutable chain. If any historical record is modified or deleted, the cryptographic hash link immediately breaks.
+            <span className="font-bold text-slate-900">How WisePay Blockchain Verification Works: </span>
+            Full invoice records and private employee documents are preserved in the enterprise database. For every evaluation or human action, WisePay generates a structured event payload, computes its SHA-256 hash combined with the previous block&apos;s hash (<span className="font-mono text-indigo-700 font-semibold bg-slate-100 px-1 py-0.2 rounded border border-slate-200">prev_hash</span>), and anchors it into an immutable chain. If any historical record is modified or deleted, the cryptographic hash link immediately breaks.
           </div>
         </div>
 

@@ -11,7 +11,7 @@ from database import engine, Base, SessionLocal
 import models  # Must import models to register them with Base.metadata
 
 def main():
-    print("=== SENTINEL Database Initialization ===")
+    print("=== WisePay Database Initialization ===")
     
     # Drop and recreate tables
     print("Creating database tables...")

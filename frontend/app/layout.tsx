@@ -3,7 +3,7 @@ import './globals.css';
 import { AuthProvider } from '@/context/AuthContext';
 
 export const metadata: Metadata = {
-  title: 'SENTINEL — Autonomous Accounts Payable Risk Intelligence',
+  title: 'WisePay — Autonomous Accounts Payable Risk Intelligence',
   description: 'Enterprise Accounts Payable fraud defense, behavioral anomaly detection, and Solana-anchored immutable audit ledger.',
 };
 
@@ -14,7 +14,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="bg-[#F8FAFC] text-[#0F172A] antialiased font-sans">
+      <body className="bg-slate-100 text-[#0F172A] antialiased font-sans">
         <AuthProvider>
           {children}
         </AuthProvider>
