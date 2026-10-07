@@ -121,14 +121,17 @@ def list_exception_pile(
         if is_dup:
             matched_inv = dup_info.get("matched_invoice_id", "previous billing")
             sim_score = dup_info.get("similarity_score", 0.9)
-            citations.append(f"Duplicate Radar: {float(sim_score)*100:.0f}% match with {matched_inv}")
-        if is_high_risk:
-            citations.append(f"IsolationForest: Anomaly score {float(inv.risk_score):.1f}/100 exceeds peer baseline")
-        if is_missing_receipt:
-            citations.append("Compliance Policy: Missing receipt attachment on high-value disbursement")
+            match_type = dup_info.get("match_type", "NEAR")
+            citations.append(f"Duplicate Radar: {float(sim_score)*100:.0f}% {match_type.lower()} match with {matched_inv}")
         if is_policy:
             rule_names = [r.get("rule_name", r.get("rule_id", "Policy")) for r in rules_list if isinstance(r, dict)]
-            citations.append(f"Policy Limit: {', '.join(rule_names[:2])}")
+            citations.append(f"Policy Limit: {', '.join(rule_names[:2])} (₹{float(inv.amount):,.0f})")
+        if is_missing_receipt:
+            citations.append(f"Compliance Policy: Missing tax invoice / receipt for ₹{float(inv.amount):,.0f}")
+        if is_high_risk and not is_dup and not is_policy and not is_missing_receipt:
+            citations.append(f"IsolationForest: Anomaly score {float(inv.risk_score):.1f}/100 exceeds vendor baseline")
+        elif is_high_risk and (is_dup or is_policy):
+            citations.append(f"Risk Index: {float(inv.risk_score):.1f}/100")
 
         ai_citation = " • ".join(citations) if citations else f"Flagged by Risk Engine (Score: {float(inv.risk_score):.1f})"
 

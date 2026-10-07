@@ -339,91 +339,119 @@ def seed_invoices(db, count: int, vendors: List[Vendor], employees: List[Employe
         counterfactuals = []
         relationship_flags = []
 
-        if scenario_idx == 2:
-            # Over Limit Scenario
-            amount_val = Decimal(random.randint(180000, 480000))
+        if scenario_idx == 0:
+            # Behavioral Outlier Scenario (Z-Score Spike / 3x-4x Historical Max)
+            hist_max = float(vendor.historical_max)
+            amount_float = round(hist_max * random.uniform(1.8, 3.4), -2)
+            amount_val = Decimal(str(amount_float))
             approval_status = "PENDING"
             receipt_status = "UPLOADED"
-            risk_score = Decimal("78.50")
-            confidence = Decimal("88.00")
+            risk_val = round(84.0 + random.uniform(1.0, 11.5), 1)
+            risk_score = Decimal(str(min(96.0, risk_val)))
+            confidence = Decimal(str(round(random.uniform(89.0, 95.0), 1)))
+            decision = "HIGH_RISK"
+            rule_item = rules_map["NEW_VENDOR"] if (i % 2 == 0) else rules_map["POLICY_LIMIT"]
+            triggered_rules_list.append(rule_item.to_dict())
+            counterfactuals.append({
+                "action": "Verify vendor historical agreement and obtain CFO spend authorization",
+                "risk_reduction": 35.0,
+                "new_risk_score": float(risk_score) - 35.0,
+                "new_decision": "HUMAN_REVIEW",
+                "impact_area": "Behavioral Spike"
+            })
+        elif scenario_idx == 2:
+            # Over Limit Scenario (₹1.8L - ₹4.8L exceeding ₹50k limit)
+            amount_val = Decimal(str(random.randint(180, 480) * 1000 + random.randint(10, 99) * 10))
+            approval_status = "PENDING"
+            receipt_status = "UPLOADED"
+            risk_val = round(74.0 + (float(amount_val) / 480000.0) * 16.0 + random.uniform(-2.0, 3.0), 1)
+            risk_score = Decimal(str(min(92.0, max(72.0, risk_val))))
+            confidence = Decimal(str(round(random.uniform(86.0, 92.0), 1)))
             decision = "HIGH_RISK"
             rule_item = rules_map["POLICY_LIMIT"]
             triggered_rules_list.append(rule_item.to_dict())
             counterfactuals.append({
                 "action": "Obtain VP / Department Head approval for limit override",
                 "risk_reduction": 26.0,
-                "new_risk_score": 52.5,
+                "new_risk_score": float(risk_score) - 26.0,
                 "new_decision": "HUMAN_REVIEW",
                 "impact_area": "Policy Compliance"
             })
         elif scenario_idx == 4:
-            # Duplicate / Near-Duplicate Scenario
-            amount_val = Decimal("48500.00")
+            # Duplicate / Near-Duplicate Scenario (Vendor-tailored amounts and varied similarity)
+            hist_min = float(vendor.historical_min)
+            hist_max = float(vendor.historical_max)
+            dup_base_amount = round(random.uniform(hist_min * 0.9, hist_max * 0.95), -2)
+            amount_val = Decimal(str(dup_base_amount))
             approval_status = "APPROVED"
             receipt_status = "UPLOADED"
-            risk_score = Decimal("88.00")
-            confidence = Decimal("92.00")
+            matched_id = f"INV-DEMO-{(i - 1):06d}" if i > 1 else "INV-DEMO-000001"
+            sim_score = round(random.uniform(0.91, 0.99), 2)
+            risk_val = round(83.0 + (sim_score - 0.90) * 90.0 + random.uniform(-2.0, 2.5), 1)
+            risk_score = Decimal(str(min(97.0, max(82.0, risk_val))))
+            confidence = Decimal(str(round(random.uniform(91.0, 96.0), 1)))
             decision = "HIGH_RISK"
             is_duplicate = True
-            matched_id = f"INV-DEMO-{(i - 1):06d}" if i > 1 else "INV-DEMO-000001"
             duplicate_info = {
                 "is_duplicate": True,
-                "similarity_score": 0.96,
+                "similarity_score": sim_score,
                 "matched_invoice_id": matched_id,
                 "matched_vendor": vendor.name,
-                "matched_amount": 48500.0,
-                "match_type": "EXACT" if i % 2 == 0 else "NEAR"
+                "matched_amount": float(amount_val),
+                "match_type": "EXACT" if (i % 3 == 0) else "NEAR"
             }
             counterfactuals.append({
                 "action": "Confirm distinct PO & separate delivery proof (resolve duplicate flag)",
                 "risk_reduction": 45.0,
-                "new_risk_score": 43.0,
+                "new_risk_score": float(risk_score) - 45.0,
                 "new_decision": "HUMAN_REVIEW",
                 "impact_area": "Duplicate & Identity"
             })
         elif scenario_idx == 6:
-            # Missing Data Scenario
-            amount_val = Decimal(random.randint(25000, 75000))
+            # Missing Data Scenario (₹25k - ₹85k disbursement with missing GST receipt)
+            amount_val = Decimal(str(random.randint(25, 85) * 1000 + random.randint(10, 99) * 10))
             approval_status = "APPROVED"
             receipt_status = "MISSING"
-            risk_score = Decimal("54.00")
-            confidence = Decimal("74.00")
+            risk_val = round(52.0 + (float(amount_val) / 85000.0) * 16.0 + random.uniform(-2.0, 3.0), 1)
+            risk_score = Decimal(str(min(70.0, max(50.0, risk_val))))
+            confidence = Decimal(str(round(random.uniform(74.0, 82.0), 1)))
             decision = "HUMAN_REVIEW"
             rule_item = rules_map["MISSING_RECEIPT"]
             triggered_rules_list.append(rule_item.to_dict())
             counterfactuals.append({
                 "action": "Upload itemized GST tax invoice / payment receipt",
                 "risk_reduction": 18.0,
-                "new_risk_score": 36.0,
+                "new_risk_score": float(risk_score) - 18.0,
                 "new_decision": "AUTO_PASS",
                 "impact_area": "Documentation"
             })
         elif scenario_idx == 8:
             # Round number / Weekend anomaly
-            amount_val = Decimal(random.choice([50000, 100000, 200000]))
+            amount_val = Decimal(str(random.choice([40000, 60000, 80000, 100000, 150000, 200000])))
             approval_status = "APPROVED"
             receipt_status = "UPLOADED"
-            risk_score = Decimal("44.00")
-            confidence = Decimal("76.00")
+            risk_val = round(42.0 + random.uniform(1.0, 11.0), 1)
+            risk_score = Decimal(str(risk_val))
+            confidence = Decimal(str(round(random.uniform(76.0, 84.0), 1)))
             decision = "HUMAN_REVIEW"
             rule_item = rules_map["ROUND_NUMBER"]
             triggered_rules_list.append(rule_item.to_dict())
             counterfactuals.append({
                 "action": "Attach detailed Statement of Work (SOW) justifying rounded billing",
                 "risk_reduction": 20.0,
-                "new_risk_score": 24.0,
+                "new_risk_score": float(risk_score) - 20.0,
                 "new_decision": "AUTO_PASS",
                 "impact_area": "Behavioral Context"
             })
         else:
-            # Clean Scenario (~60% - 70%)
+            # Clean Scenario (~50%)
             hist_min = int(vendor.historical_min)
             hist_max = int(vendor.historical_max)
-            amount_val = Decimal(random.randint(max(1000, hist_min), max(2000, hist_max)))
+            amount_val = Decimal(str(random.randint(max(1000, hist_min), max(2000, hist_max))))
             approval_status = "APPROVED"
             receipt_status = "UPLOADED"
-            risk_score = Decimal(str(round(random.uniform(5.0, 22.0), 2)))
-            confidence = Decimal(str(round(random.uniform(88.0, 97.0), 2)))
+            risk_score = Decimal(str(round(random.uniform(4.0, 19.5), 1)))
+            confidence = Decimal(str(round(random.uniform(88.0, 98.0), 1)))
             decision = "AUTO_PASS"
 
         # Construct Evidence Graph
