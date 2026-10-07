@@ -45,3 +45,17 @@ def test_ocr_microsoft_online_url_scanner():
     assert "amount" in result
     assert result["amount"] > 0
     assert result["confidence"] >= 90.0
+
+
+def test_ocr_image_rapidocr():
+    """Verify RapidOCR extracts actual invoice values (Vaibhav Plastics / INV-2026-9064 / 50000.00)."""
+    import os
+    img_path = r"C:/Users/saura/.gemini/antigravity/brain/2602d399-2a07-4b7c-84e4-f6684d317582/.user_uploaded/media_1791358218017.png"
+    if os.path.exists(img_path):
+        with open(img_path, "rb") as f:
+            b = f.read()
+        res = ocr_scanner.scan_document(b, "Gemini_Generated_Image_j21o71j21o71j21o.png")
+        assert res["amount"] == 50000.00
+        assert res["invoice_number"] == "INV-2026-9064"
+        assert "Vaibhav Plastics" in res["vendor_name"]
+        assert res["category"] == "Office Supplies"

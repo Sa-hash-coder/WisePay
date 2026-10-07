@@ -230,7 +230,27 @@ def process_invoice(db: Session, invoice_in: Any, current_user: Optional[User] =
     """
     try:
         # 1. Resolve Foreign References & Identifiers
-        vendor = db.query(Vendor).filter_by(id=invoice_in.vendor_id).first()
+        vendor = db.query(Vendor).filter_by(id=invoice_in.vendor_id).first() if invoice_in.vendor_id else None
+        if not vendor and invoice_in.vendor_name:
+            vendor = db.query(Vendor).filter(Vendor.name.ilike(invoice_in.vendor_name.strip())).first()
+            if vendor and hasattr(invoice_in, 'vendor_id'):
+                invoice_in.vendor_id = vendor.id
+
+        if not vendor and invoice_in.vendor_id and invoice_in.vendor_id != "EMP_REIMBURSE":
+            # Auto-register newly onboarded vendor in database
+            vendor = Vendor(
+                id=invoice_in.vendor_id,
+                name=invoice_in.vendor_name or f"Vendor {invoice_in.vendor_id}",
+                category=invoice_in.category or "General",
+                historical_min=Decimal(str(invoice_in.amount or 0.0)),
+                historical_max=Decimal(str(invoice_in.amount or 0.0)),
+                total_spend=Decimal("0.00"),
+                invoice_count=0,
+                created_at=datetime.datetime.utcnow(),
+            )
+            db.add(vendor)
+            db.flush()
+
         vendor_name = invoice_in.vendor_name or (vendor.name if vendor else f"Vendor {invoice_in.vendor_id}")
         vendor_category = invoice_in.category or (vendor.category if vendor else "General")
 

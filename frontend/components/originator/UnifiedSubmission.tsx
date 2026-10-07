@@ -60,11 +60,13 @@ export function UnifiedSubmission() {
           const d = scanRes.extracted_data;
           if (d.amount) setAmount(String(d.amount));
           if (d.invoice_number) setInvoiceNumber(d.invoice_number);
-          if (d.vendor_name && submissionType === 'VENDOR') {
+          if (d.vendor_name) {
             setVendorName(d.vendor_name);
             if (d.vendor_id) setVendorId(d.vendor_id);
+            setSubmissionType('VENDOR');
           }
           if (d.category) setCategory(d.category);
+          if (d.description) setDescription(d.description);
           setOcrNotice(`Document Digitized (${scanRes.source_engine || 'Microsoft AI Engine'}): Extracted ₹${Number(d.amount).toLocaleString('en-IN')}, Invoice #${d.invoice_number}`);
         }
       } catch (err) {
@@ -92,11 +94,13 @@ export function UnifiedSubmission() {
         const d = scanRes.extracted_data;
         if (d.amount) setAmount(String(d.amount));
         if (d.invoice_number) setInvoiceNumber(d.invoice_number);
-        if (d.vendor_name && submissionType === 'VENDOR') {
+        if (d.vendor_name) {
           setVendorName(d.vendor_name);
           if (d.vendor_id) setVendorId(d.vendor_id);
+          setSubmissionType('VENDOR');
         }
         if (d.category) setCategory(d.category);
+        if (d.description) setDescription(d.description);
         setOcrNotice(`Online PDF / E-Invoice Digitized (${scanRes.source_engine || 'Microsoft AI'}): Extracted ₹${Number(d.amount).toLocaleString('en-IN')}, Invoice #${d.invoice_number}`);
       }
     } catch (err: any) {

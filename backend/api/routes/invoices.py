@@ -16,7 +16,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 if str(BASE_DIR) not in sys.path:
     sys.path.insert(0, str(BASE_DIR))
 
-from api.deps import get_current_user, get_db
+from api.deps import get_current_user, get_current_user_or_originator, get_db
 from api.schemas.invoice import (
     InvoiceBulkCreate,
     InvoiceBulkResult,
@@ -40,7 +40,7 @@ def get_originator_user(db: Session) -> Optional[User]:
 def ingest_single_invoice(
     invoice_in: InvoiceCreate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_user_or_originator),
 ) -> Any:
     """
     Ingests a single invoice or expense receipt from The Originator into the AI Risk Pipeline:
@@ -68,7 +68,7 @@ def ingest_single_invoice(
 def ingest_bulk_invoices(
     payload: Union[InvoiceBulkCreate, List[InvoiceCreate]],
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_user_or_originator),
 ) -> Any:
     """
     Ingests a batch of invoices sequentially within the risk orchestration pipeline.
@@ -140,12 +140,12 @@ async def scan_receipt_image(
         "source_engine": scan_result.get("source_engine", "Microsoft Azure AI Document Intelligence"),
         "extracted_data": {
             "vendor_id": scan_result.get("vendor_id", "V001"),
-            "vendor_name": scan_result.get("vendor_name", "AWS Cloud Services"),
+            "vendor_name": scan_result.get("vendor_name", "Enterprise Supplier"),
             "invoice_number": scan_result.get("invoice_number", f"INV-{uuid.uuid4().hex[:6].upper()}"),
             "amount": scan_result.get("amount", 18500.00),
             "currency": scan_result.get("currency", "INR"),
-            "category": scan_result.get("category", "Software"),
-            "description": f"Digitized from {file.filename} via {scan_result.get('source_engine', 'Optical Scanner')}",
+            "category": scan_result.get("category", "Office Supplies"),
+            "description": scan_result.get("description") or f"Digitized from {file.filename} via {scan_result.get('source_engine', 'Optical Scanner')}",
             "receipt_status": "UPLOADED",
             "confidence": scan_result.get("confidence", 94.0),
             "raw_ocr_preview": scan_result.get("raw_ocr_preview", f"Scanned file: {file.filename}"),
