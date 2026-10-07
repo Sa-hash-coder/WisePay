@@ -68,9 +68,9 @@ function ExceptionPileContent() {
     missing_receipt: number;
   }>({
     all: 50,
-    high_risk: 30,
+    high_risk: 10,
     duplicates: 10,
-    policy: 30,
+    policy: 20,
     missing_receipt: 10,
   });
   const [loading, setLoading] = useState(true);

@@ -116,23 +116,25 @@ def list_exception_pile(
 
         dup_info = anomaly_dict.get("duplicate_info", {})
         is_dup = bool(dup_info.get("is_duplicate"))
-        is_missing_receipt = inv.receipt_status == "MISSING" or any(
-            isinstance(r, dict) and r.get("rule_id") == "MISSING_RECEIPT" for r in rules_list
-        )
-        is_policy = any(
-            isinstance(r, dict) and r.get("rule_id") in ["POLICY_LIMIT", "SPLIT_PO", "WEEKEND_SUBMISSION", "ROUND_NUMBER", "NEW_VENDOR"] for r in rules_list
-        )
+        rule_ids = [r.get("rule_id") for r in rules_list if isinstance(r, dict)]
+        is_missing_receipt = inv.receipt_status == "MISSING" or "MISSING_RECEIPT" in rule_ids
+        is_policy = any(rid in ["POLICY_LIMIT", "ROUND_NUMBER", "SPLIT_PO", "WEEKEND_SUBMISSION"] for rid in rule_ids)
         is_high_risk = inv.decision == "HIGH_RISK" or (inv.risk_score and inv.risk_score >= 70.0)
 
-        # Count categories globally before filtering
-        if is_high_risk:
-            category_counts["high_risk"] += 1
+        # Mutually exclusive primary exception category partition
+        # Guarantees sum(counts) == total exceptions (50) with zero overlap
         if is_dup:
+            primary_category = "DUPLICATES"
             category_counts["duplicates"] += 1
-        if is_policy:
-            category_counts["policy"] += 1
-        if is_missing_receipt:
+        elif is_missing_receipt:
+            primary_category = "MISSING_RECEIPT"
             category_counts["missing_receipt"] += 1
+        elif is_policy:
+            primary_category = "POLICY"
+            category_counts["policy"] += 1
+        else:
+            primary_category = "HIGH_RISK"
+            category_counts["high_risk"] += 1
 
         # Bill Health Evaluation: BAD (High Risk), MID (Caution/Review), GOOD (Low Risk)
         risk_score_val = float(inv.risk_score) if inv.risk_score is not None else 0.0
@@ -156,32 +158,34 @@ def list_exception_pile(
             sim_score = dup_info.get("similarity_score", 0.9)
             match_type = dup_info.get("match_type", "NEAR")
             citations.append(f"Duplicate Radar: {float(sim_score)*100:.0f}% {match_type.lower()} match with {matched_inv}")
-        if is_policy:
+        elif is_policy:
             rule_names = [r.get("rule_name", r.get("rule_id", "Policy")) for r in rules_list if isinstance(r, dict)]
             citations.append(f"Policy Limit: {', '.join(rule_names[:2])} (₹{float(inv.amount):,.0f})")
-        if is_missing_receipt:
+        elif is_missing_receipt:
             citations.append(f"Compliance Policy: Missing tax invoice / receipt for ₹{float(inv.amount):,.0f}")
-        if is_high_risk and not is_dup and not is_policy and not is_missing_receipt:
+        else:
             citations.append(f"IsolationForest: Anomaly score {float(inv.risk_score):.1f}/100 exceeds vendor baseline")
-        elif is_high_risk and (is_dup or is_policy):
+
+        if is_high_risk and (is_dup or is_policy or is_missing_receipt):
             citations.append(f"Risk Index: {float(inv.risk_score):.1f}/100")
 
         ai_citation = " • ".join(citations) if citations else f"Flagged by Risk Engine (Score: {float(inv.risk_score):.1f})"
 
-        # Flag filter: support all frontend query aliases
+        # Flag filter: filter by primary category so clicking the button returns exactly that count
         if flag_type and flag_type != "ALL":
             ft = flag_type.upper()
-            if ft in ["DUPLICATE", "DUPLICATES"] and not is_dup:
+            if ft in ["DUPLICATE", "DUPLICATES"] and primary_category != "DUPLICATES":
                 continue
-            if ft in ["HIGH_RISK", "HIGH-RISK", "ANOMALY", "ANOMALIES"] and not is_high_risk:
+            if ft in ["HIGH_RISK", "HIGH-RISK", "ANOMALY", "ANOMALIES"] and primary_category != "HIGH_RISK":
                 continue
-            if ft in ["POLICY", "POLICY_LIMIT", "POLICY_LIMITS"] and not is_policy:
+            if ft in ["POLICY", "POLICY_LIMIT", "POLICY_LIMITS"] and primary_category != "POLICY":
                 continue
-            if ft in ["MISSING_RECEIPT", "MISSING_RECEIPTS", "MISSING_FIELD", "MISSING_FIELDS"] and not is_missing_receipt:
+            if ft in ["MISSING_RECEIPT", "MISSING_RECEIPTS", "MISSING_FIELD", "MISSING_FIELDS"] and primary_category != "MISSING_RECEIPT":
                 continue
 
         item_dict = inv.to_dict()
         item_dict["ai_citation"] = ai_citation
+        item_dict["primary_category"] = primary_category
         item_dict["is_duplicate"] = is_dup
         item_dict["is_missing_receipt"] = is_missing_receipt
         item_dict["is_policy_breach"] = is_policy
