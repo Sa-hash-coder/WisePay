@@ -481,8 +481,8 @@ export default function InvestigatePage() {
 
               {/* 6. AUDIT & GOVERNANCE */}
               {activeTab === 'Audit & Governance' && (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <Card className="p-6 flex flex-col gap-4 bg-white border border-[#E2ECE4] rounded-2xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.02)]">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 min-w-0">
+                  <Card className="p-6 flex flex-col gap-4 bg-white border border-[#E2ECE4] rounded-2xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.02)] min-w-0 overflow-hidden">
                     <div className="flex items-center justify-between border-b border-[#EAEFEA] pb-3">
                       <h3 className="text-sm font-bold uppercase tracking-wider text-[#0F172A]">
                         Sequential Execution Trace

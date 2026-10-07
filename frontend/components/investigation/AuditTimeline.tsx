@@ -66,9 +66,21 @@ export function AuditTimeline({ timeline, invoiceDate }: AuditTimelineProps) {
               </span>
             </div>
 
-            <p className="text-xs text-[#64748B] mb-2 leading-relaxed">{ev.desc}</p>
+            {typeof ev.desc === 'string' && ev.desc.startsWith('{') ? (
+              <pre className="text-[11px] font-mono text-[#475569] bg-[#F1F5F9] p-2 rounded-lg mb-2 overflow-x-auto whitespace-pre-wrap break-all border border-[#E2E8F0]">
+                {(() => {
+                  try {
+                    return JSON.stringify(JSON.parse(ev.desc), null, 2);
+                  } catch {
+                    return ev.desc;
+                  }
+                })()}
+              </pre>
+            ) : (
+              <p className="text-xs text-[#64748B] mb-2 leading-relaxed break-words">{ev.desc}</p>
+            )}
 
-            <div className="flex items-center justify-between text-[10px] text-[#64748B] pt-2 border-t border-[#EAEFEA]">
+            <div className="flex flex-wrap items-center justify-between gap-2 text-[10px] text-[#64748B] pt-2 border-t border-[#EAEFEA]">
               <span className="font-mono flex items-center gap-1 bg-white px-2 py-0.5 rounded-full border border-[#E2ECE4] text-[#0F172A]">
                 <Hash className="w-2.5 h-2.5 text-[#16A34A]" />
                 Block Hash: {ev.hash}
