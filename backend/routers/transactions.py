@@ -30,16 +30,30 @@ def get_transactions(
         "items": [t.to_dict() for t in items]
     }
 
+import uuid
+
+def find_transaction(id_val: str, db: Session):
+    if not id_val:
+        return None
+    item = db.query(Transaction).filter(Transaction.invoice_id == id_val).first()
+    if item:
+        return item
+    try:
+        val_uuid = uuid.UUID(str(id_val))
+        return db.query(Transaction).filter(Transaction.id == val_uuid).first()
+    except (ValueError, TypeError, AttributeError):
+        return None
+
 @router.get("/{id}")
 def get_transaction(id: str, db: Session = Depends(get_db)):
-    item = db.query(Transaction).filter(Transaction.id == id).first()
+    item = find_transaction(id, db)
     if not item:
          return {"error": "Not found"}
     return item.to_dict()
 
 @router.get("/{id}/similar")
 def get_similar(id: str, db: Session = Depends(get_db)):
-    item = db.query(Transaction).filter(Transaction.id == id).first()
+    item = find_transaction(id, db)
     if not item:
          return {"error": "Not found"}
          
@@ -48,7 +62,7 @@ def get_similar(id: str, db: Session = Depends(get_db)):
     
     if duplicate_info.get('is_duplicate') and duplicate_info.get('matched_invoice_id'):
         matched_id = duplicate_info['matched_invoice_id']
-        similar_item = db.query(Transaction).filter(Transaction.id == matched_id).first()
+        similar_item = find_transaction(matched_id, db)
         if similar_item:
             return [similar_item.to_dict()]
             

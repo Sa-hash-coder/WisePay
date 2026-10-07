@@ -5,20 +5,32 @@ from database import get_db
 from models import Transaction, HumanDecision
 from audit.chain import create_audit_event
 
+import uuid
+
 router = APIRouter(prefix="/api/feedback", tags=["feedback"])
+
+def find_transaction(id_val: str, db: Session):
+    if not id_val:
+        return None
+    item = db.query(Transaction).filter(Transaction.invoice_id == id_val).first()
+    if item:
+        return item
+    try:
+        val_uuid = uuid.UUID(str(id_val))
+        return db.query(Transaction).filter(Transaction.id == val_uuid).first()
+    except (ValueError, TypeError, AttributeError):
+        return None
 
 # EXACTLY 3 organizational roles permitted
 PERMITTED_ROLES = {
+    "THE ORIGINATOR",
     "AP / FINANCE REVIEWER",
-    "FINANCE MANAGER",
     "AUDITOR"
 }
 
-AP_REVIEWER_APPROVAL_LIMIT = 500000.0  # ₹5,00,000
-
 @router.post("/{transaction_id}")
 def submit_feedback(transaction_id: str, body: dict = Body(...), db: Session = Depends(get_db)):
-    t = db.query(Transaction).filter(Transaction.id == transaction_id).first()
+    t = find_transaction(transaction_id, db)
     if not t:
         raise HTTPException(status_code=404, detail="Transaction not found")
         
@@ -34,25 +46,21 @@ def submit_feedback(transaction_id: str, body: dict = Body(...), db: Session = D
             detail=f"Unauthorized role: '{reviewer_role}'. Must be one of {sorted(list(PERMITTED_ROLES))}."
         )
 
+    # Segregation of Duties (SoD) enforcement for THE ORIGINATOR
+    if reviewer_role == "THE ORIGINATOR":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Segregation of Duties (SoD) policy: The Originator role is dedicated to data ingestion and cannot review or approve exceptions."
+        )
+
     # Segregation of Duties (SoD) enforcement for AUDITOR
-    if reviewer_role == "AUDITOR":
+    if reviewer_role in ["AUDITOR", "COMPLIANCE AUDITOR"]:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Segregation of Duties (SoD) policy: Auditors have independent read-only forensic clearance and cannot authorize or reject disbursement decisions."
         )
 
-    # Authority threshold check for AP / FINANCE REVIEWER
-    if reviewer_role == "AP / FINANCE REVIEWER" and decision == "APPROVE":
-        if t.decision == "HIGH_RISK":
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="High-Risk exception hold requires Finance Manager override sign-off. Please Escalate to Manager."
-            )
-        if t.amount and t.amount > AP_REVIEWER_APPROVAL_LIMIT:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail=f"Amount (₹{t.amount:,.2f}) exceeds AP Reviewer threshold of ₹{AP_REVIEWER_APPROVAL_LIMIT:,.2f}. Escalate to Finance Manager."
-            )
+    # AP / FINANCE REVIEWER has direct authority to Approve, Reject, or Escalate any flagged row.
 
     # 1. Create HumanDecision record
     hd = HumanDecision(
@@ -100,25 +108,28 @@ def get_available_roles():
     return {
         "roles": [
             {
-                "id": "AP / FINANCE REVIEWER",
-                "department": "Accounts Payable Operations",
-                "authority": "Standard review up to ₹5,00,000. Escalate high-risk to Manager.",
-                "can_approve_disbursement": True,
+                "id": "THE ORIGINATOR",
+                "title": "The Originator",
+                "department": "AP Ingestion & Invoicing",
+                "authority": "Single entry receipt/invoice submissions and bulk batch enterprise simulation.",
+                "can_approve_disbursement": False,
                 "can_override_high_risk": False,
                 "can_audit_ledger": False
             },
             {
-                "id": "FINANCE MANAGER",
-                "department": "Financial Control & Treasury",
-                "authority": "Full approval authority, high-risk quarantine release, and heuristic overrides.",
+                "id": "AP / FINANCE REVIEWER",
+                "title": "AP / Finance Reviewer",
+                "department": "Exception Handling & Operations",
+                "authority": "Primary human-in-the-loop exception handler. Direct authority to Approve, Reject, or Escalate flagged anomalies.",
                 "can_approve_disbursement": True,
                 "can_override_high_risk": True,
-                "can_audit_ledger": True
+                "can_audit_ledger": False
             },
             {
                 "id": "AUDITOR",
+                "title": "Compliance Auditor",
                 "department": "Independent Compliance & SOX Audit",
-                "authority": "Forensic ledger inspection & Solana SHA-256 verification. Segregation of Duties (read-only for disbursements).",
+                "authority": "Read-only forensic inspection, 90% auto-pass vs 10% flagged verification, and cryptographic SHA-256 audit trail.",
                 "can_approve_disbursement": False,
                 "can_override_high_risk": False,
                 "can_audit_ledger": True

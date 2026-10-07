@@ -1,4 +1,4 @@
-export type UserRole = 'AP / FINANCE REVIEWER' | 'FINANCE MANAGER' | 'AUDITOR';
+export type UserRole = 'THE ORIGINATOR' | 'AP / FINANCE REVIEWER' | 'AUDITOR';
 
 export interface UserProfile {
   name: string;
@@ -9,6 +9,7 @@ export interface UserProfile {
 }
 
 export interface RolePermissions {
+  canSubmitData: boolean;
   canApproveStandard: boolean;
   canApproveHighRisk: boolean;
   canOverrideQuarantine: boolean;
@@ -35,26 +36,56 @@ export interface RoleConfig {
 }
 
 export const ROLE_CONFIGS: Record<UserRole, RoleConfig> = {
+  'THE ORIGINATOR': {
+    role: 'THE ORIGINATOR',
+    title: 'The Originator',
+    department: 'Accounts Payable & Invoicing',
+    description: 'Unified submission portal for employees and vendors with receipt/invoice intake and batch uploads.',
+    badgeClasses: {
+      bg: 'bg-[#EFF6FF]',
+      text: 'text-[#1D4ED8]',
+      border: 'border-[#BFDBFE]',
+      indicator: 'bg-[#2563EB]',
+    },
+    permissions: {
+      canSubmitData: true,
+      canApproveStandard: false,
+      canApproveHighRisk: false,
+      canOverrideQuarantine: false,
+      canReject: false,
+      canEscalate: false,
+      canVerifyLedger: false,
+      isAuditorReadOnly: false,
+      approvalLimit: 0,
+    },
+    defaultUser: {
+      name: 'Alex Chen',
+      email: 'alex.chen@wisepay.internal',
+      role: 'THE ORIGINATOR',
+      organization: 'Global Enterprise Corp',
+    },
+  },
   'AP / FINANCE REVIEWER': {
     role: 'AP / FINANCE REVIEWER',
     title: 'AP / Finance Reviewer',
-    department: 'Accounts Payable Operations',
-    description: 'First-line invoice verification, documentation review, and escalation of high-risk policy exceptions.',
+    department: 'Exception Handling & Operations',
+    description: 'Primary human-in-the-loop exception handler. Operates Exception Pile dashboard with direct authority to Approve, Reject, or Escalate flagged anomalies.',
     badgeClasses: {
-      bg: 'bg-sky-50',
-      text: 'text-sky-700',
-      border: 'border-sky-200',
-      indicator: 'bg-sky-500',
+      bg: 'bg-[#F0FDFA]',
+      text: 'text-[#0F766E]',
+      border: 'border-[#99F6E4]',
+      indicator: 'bg-[#0D9488]',
     },
     permissions: {
+      canSubmitData: false,
       canApproveStandard: true,
-      canApproveHighRisk: false,
-      canOverrideQuarantine: false,
+      canApproveHighRisk: true,
+      canOverrideQuarantine: true,
       canReject: true,
       canEscalate: true,
       canVerifyLedger: false,
       isAuditorReadOnly: false,
-      approvalLimit: 500000, // ₹5,00,000 threshold
+      approvalLimit: -1, // Full exception triage authority
     },
     defaultUser: {
       name: 'Priya Sharma',
@@ -63,53 +94,26 @@ export const ROLE_CONFIGS: Record<UserRole, RoleConfig> = {
       organization: 'Global Enterprise Corp',
     },
   },
-  'FINANCE MANAGER': {
-    role: 'FINANCE MANAGER',
-    title: 'Finance Manager',
-    department: 'Treasury & Financial Control',
-    description: 'Executive disbursement approval, high-risk quarantine release, heuristic override, and financial policy governance.',
-    badgeClasses: {
-      bg: 'bg-indigo-50',
-      text: 'text-indigo-700',
-      border: 'border-indigo-200',
-      indicator: 'bg-indigo-500',
-    },
-    permissions: {
-      canApproveStandard: true,
-      canApproveHighRisk: true,
-      canOverrideQuarantine: true,
-      canReject: true,
-      canEscalate: false,
-      canVerifyLedger: true,
-      isAuditorReadOnly: false,
-      approvalLimit: -1, // Unlimited approval authority
-    },
-    defaultUser: {
-      name: 'Marcus Vance',
-      email: 'marcus.vance@wisepay.internal',
-      role: 'FINANCE MANAGER',
-      organization: 'Global Enterprise Corp',
-    },
-  },
   'AUDITOR': {
     role: 'AUDITOR',
     title: 'Compliance Auditor',
     department: 'Independent Compliance & SOX Audit',
-    description: 'Segregation of duties enforcement, forensic transaction inspection, and Solana cryptographic ledger verification.',
+    description: 'Read-only enterprise governance. Verifies the 90% auto-passed, 10% flagged exceptions, manual reviewer interventions, and cryptographic SHA-256 audit ledger.',
     badgeClasses: {
-      bg: 'bg-emerald-50',
-      text: 'text-emerald-700',
-      border: 'border-emerald-200',
-      indicator: 'bg-emerald-500',
+      bg: 'bg-[#FFFBEB]',
+      text: 'text-[#92400E]',
+      border: 'border-[#FDE68A]',
+      indicator: 'bg-[#F59E0B]',
     },
     permissions: {
-      canApproveStandard: false, // Segregation of duties: cannot approve disbursements
+      canSubmitData: false,
+      canApproveStandard: false,
       canApproveHighRisk: false,
       canOverrideQuarantine: false,
       canReject: false,
       canEscalate: false,
       canVerifyLedger: true,
-      isAuditorReadOnly: true,
+      isAuditorReadOnly: true, // Enforces SOX 404 & SOC2 Segregation of Duties
       approvalLimit: 0,
     },
     defaultUser: {
@@ -122,7 +126,7 @@ export const ROLE_CONFIGS: Record<UserRole, RoleConfig> = {
 };
 
 export const ALL_ROLES: UserRole[] = [
+  'THE ORIGINATOR',
   'AP / FINANCE REVIEWER',
-  'FINANCE MANAGER',
   'AUDITOR',
 ];

@@ -18,7 +18,6 @@ interface AuditTimelineProps {
 }
 
 export function AuditTimeline({ timeline, invoiceDate }: AuditTimelineProps) {
-  // Synthesize comprehensive end-to-end audit trace if only ledger block exists
   const events = timeline && timeline.length > 0 ? timeline.map((ev, i) => ({
     id: i + 1,
     time: ev.timestamp ? new Date(ev.timestamp).toLocaleTimeString() : '10:31:06',
@@ -39,7 +38,7 @@ export function AuditTimeline({ timeline, invoiceDate }: AuditTimelineProps) {
 
   return (
     <div className="relative pl-6 space-y-6">
-      <div className="absolute left-[13px] top-3 bottom-3 w-px bg-slate-200" />
+      <div className="absolute left-[13px] top-3 bottom-3 w-px bg-[#E2ECE4]" />
       
       {events.map((ev, idx) => (
         <motion.div 
@@ -50,32 +49,32 @@ export function AuditTimeline({ timeline, invoiceDate }: AuditTimelineProps) {
           className="relative"
         >
           {/* Timeline node dot */}
-          <div className={`absolute -left-[27px] top-1 w-6 h-6 rounded-full border-2 flex items-center justify-center z-10 bg-white ${
+          <div className={`absolute -left-[27px] top-1 w-6 h-6 rounded-full border-2 flex items-center justify-center z-10 bg-white shadow-xs ${
             ev.isHuman 
-              ? 'border-purple-600 text-purple-600' 
-              : 'border-indigo-600 text-indigo-600'
+              ? 'border-[#F59E0B] text-[#D97706]' 
+              : 'border-[#16A34A] text-[#16A34A]'
           }`}>
             {ev.isHuman ? <UserCheck className="w-3 h-3" /> : <Activity className="w-3 h-3" />}
           </div>
 
-          <div className="bg-slate-50/70 rounded-xl p-4 border border-slate-200 hover:border-indigo-300 hover:bg-white transition-all shadow-2xs">
+          <div className="bg-[#FAFCFA] rounded-xl p-4 border border-[#E2ECE4] hover:border-[#16A34A] hover:bg-white transition-all shadow-xs">
             <div className="flex items-center justify-between mb-1">
               <h4 className="font-bold text-xs text-[#0F172A]">{ev.title}</h4>
-              <span className="text-[11px] font-mono text-slate-400 flex items-center gap-1">
-                <Clock className="w-3 h-3 text-slate-400" />
+              <span className="text-[11px] font-mono text-[#94A3B8] flex items-center gap-1">
+                <Clock className="w-3 h-3 text-[#94A3B8]" />
                 {ev.time}
               </span>
             </div>
 
-            <p className="text-xs text-slate-600 mb-2 leading-relaxed">{ev.desc}</p>
+            <p className="text-xs text-[#64748B] mb-2 leading-relaxed">{ev.desc}</p>
 
-            <div className="flex items-center justify-between text-[10px] text-slate-500 pt-2 border-t border-slate-200/60">
-              <span className="font-mono flex items-center gap-1 bg-white px-2 py-0.5 rounded-md border border-slate-200 text-slate-700">
-                <Hash className="w-2.5 h-2.5 text-indigo-600" />
+            <div className="flex items-center justify-between text-[10px] text-[#64748B] pt-2 border-t border-[#EAEFEA]">
+              <span className="font-mono flex items-center gap-1 bg-white px-2 py-0.5 rounded-full border border-[#E2ECE4] text-[#0F172A]">
+                <Hash className="w-2.5 h-2.5 text-[#16A34A]" />
                 Block Hash: {ev.hash}
               </span>
               {ev.blockIndex !== undefined && (
-                <span className="font-mono font-semibold text-purple-700 bg-purple-50 border border-purple-200 px-2 py-0.5 rounded-md">
+                <span className="font-mono font-bold text-[#16A34A] bg-[#E8F8EE] border border-[#D1EED8] px-2.5 py-0.5 rounded-full">
                   Block #{ev.blockIndex}
                 </span>
               )}

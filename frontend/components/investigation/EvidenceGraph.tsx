@@ -27,7 +27,6 @@ interface EvidenceGraphProps {
 export function EvidenceGraph({ transaction, graphData, duplicateInfo, behavioralData, policyViolations }: EvidenceGraphProps) {
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
 
-  // Compute structured layout of evidence chain
   const chainNodes = useMemo(() => {
     const list: Array<{
       id: string;
@@ -46,9 +45,9 @@ export function EvidenceGraph({ transaction, graphData, duplicateInfo, behaviora
       title: transaction.invoice_id,
       subtitle: `Amount: ₹${transaction.amount?.toLocaleString('en-IN')}`,
       type: 'transaction',
-      color: '#4F46E5',
-      bg: '#EEF2FF',
-      border: '#C7D2FE',
+      color: '#16A34A',
+      bg: '#E8F8EE',
+      border: '#D1EED8',
       iconText: 'TX'
     });
 
@@ -58,9 +57,9 @@ export function EvidenceGraph({ transaction, graphData, duplicateInfo, behaviora
       title: transaction.vendor_name,
       subtitle: `Vendor ID: ${transaction.vendor_id}`,
       type: 'vendor',
-      color: '#7C3AED',
-      bg: '#F5F3FF',
-      border: '#DDD6FE',
+      color: '#0D9488',
+      bg: '#F0FDFA',
+      border: '#CCFBF1',
       iconText: 'VEN'
     });
 
@@ -70,9 +69,9 @@ export function EvidenceGraph({ transaction, graphData, duplicateInfo, behaviora
       title: transaction.employee_name,
       subtitle: `${transaction.employee_dept} Department`,
       type: 'employee',
-      color: '#0284C7',
-      bg: '#F0F9FF',
-      border: '#BAE6FD',
+      color: '#2563EB',
+      bg: '#EFF6FF',
+      border: '#DBEAFE',
       iconText: 'EMP'
     });
 
@@ -131,9 +130,9 @@ export function EvidenceGraph({ transaction, graphData, duplicateInfo, behaviora
       title: `${transaction.decision.replace('_', ' ')} (Score: ${transaction.risk_score})`,
       subtitle: `Confidence: ${transaction.confidence}%`,
       type: 'decision',
-      color: isHigh ? '#DC2626' : isAuto ? '#059669' : '#D97706',
-      bg: isHigh ? '#FEF2F2' : isAuto ? '#ECFDF5' : '#FFFBEB',
-      border: isHigh ? '#FCA5A5' : isAuto ? '#A7F3D0' : '#FDE68A',
+      color: isHigh ? '#DC2626' : isAuto ? '#16A34A' : '#D97706',
+      bg: isHigh ? '#FEF2F2' : isAuto ? '#E8F8EE' : '#FFFBEB',
+      border: isHigh ? '#FCA5A5' : isAuto ? '#D1EED8' : '#FDE68A',
       iconText: isHigh ? 'HOLD' : isAuto ? 'PASS' : 'REV'
     });
 
@@ -141,17 +140,17 @@ export function EvidenceGraph({ transaction, graphData, duplicateInfo, behaviora
   }, [transaction, duplicateInfo, behavioralData, policyViolations]);
 
   return (
-    <div className="flex flex-col gap-4 bg-white rounded-2xl p-6 border border-slate-200 shadow-xs">
-      <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+    <div className="flex flex-col gap-4 bg-white rounded-2xl p-6 border border-[#E2ECE4] shadow-[0_4px_20px_-2px_rgba(0,0,0,0.02)]">
+      <div className="flex items-center justify-between pb-3 border-b border-[#EAEFEA]">
         <div>
           <h4 className="text-sm font-bold text-[#0F172A] uppercase tracking-wider">
             Explainable Decision Chain
           </h4>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <p className="text-xs text-[#64748B] mt-0.5">
             Every score and routing action is strictly grounded in verifiable transactional evidence.
           </p>
         </div>
-        <span className="text-[11px] font-mono text-slate-600 bg-slate-100 px-2.5 py-0.5 rounded-full border border-slate-200">
+        <span className="text-[11px] font-mono text-[#16A34A] bg-[#E8F8EE] px-3 py-0.5 rounded-full border border-[#D1EED8] font-bold">
           {chainNodes.length} Linked Nodes
         </span>
       </div>
@@ -181,7 +180,7 @@ export function EvidenceGraph({ transaction, graphData, duplicateInfo, behaviora
                 transition={{ delay: i * 0.08 }}
                 onClick={() => setSelectedNode(node.id)}
                 className={`relative flex items-center gap-4 p-3.5 rounded-xl border transition-all cursor-pointer ${
-                  isSelected ? 'ring-2 ring-indigo-500 shadow-xs' : 'hover:shadow-xs'
+                  isSelected ? 'ring-2 ring-[#16A34A] shadow-xs' : 'hover:shadow-xs'
                 }`}
                 style={{
                   backgroundColor: node.bg,
@@ -202,12 +201,12 @@ export function EvidenceGraph({ transaction, graphData, duplicateInfo, behaviora
                   <div className="text-xs font-bold text-[#0F172A] truncate">
                     {node.title}
                   </div>
-                  <div className="text-[11px] text-slate-600 truncate mt-0.5">
+                  <div className="text-[11px] text-[#64748B] truncate mt-0.5">
                     {node.subtitle}
                   </div>
                 </div>
 
-                <div className="text-[10px] uppercase font-mono px-2 py-0.5 rounded-md bg-white/80 text-slate-700 flex-shrink-0 border border-slate-200">
+                <div className="text-[10px] uppercase font-mono px-2 py-0.5 rounded-md bg-white/90 text-[#0F172A] flex-shrink-0 border border-[#E2ECE4] font-semibold">
                   {node.type}
                 </div>
               </motion.div>

@@ -5,11 +5,25 @@ from models import Transaction, AuditEvent
 import json
 from engine.counterfactual import generate_counterfactuals
 
+import uuid
+
 router = APIRouter(prefix="/api/investigation", tags=["investigation"])
+
+def find_transaction(id_val: str, db: Session):
+    if not id_val:
+        return None
+    item = db.query(Transaction).filter(Transaction.invoice_id == id_val).first()
+    if item:
+        return item
+    try:
+        val_uuid = uuid.UUID(str(id_val))
+        return db.query(Transaction).filter(Transaction.id == val_uuid).first()
+    except (ValueError, TypeError, AttributeError):
+        return None
 
 @router.get("/{id}")
 def get_investigation_package(id: str, db: Session = Depends(get_db)):
-    t = db.query(Transaction).filter(Transaction.id == id).first()
+    t = find_transaction(id, db)
     if not t:
         return {"error": "Not found"}
         
@@ -27,7 +41,8 @@ def get_investigation_package(id: str, db: Session = Depends(get_db)):
     )
     
     # Audit Timeline — enrich with descriptions
-    events = db.query(AuditEvent).filter(AuditEvent.transaction_id == id).order_by(AuditEvent.block_index.asc()).all()
+    id_candidates = list({str(id), str(t.id), str(t.invoice_id)})
+    events = db.query(AuditEvent).filter(AuditEvent.transaction_id.in_(id_candidates)).order_by(AuditEvent.block_index.asc()).all()
     
     event_descriptions = {
         "TRANSACTION_PROCESSED": "Transaction processed by risk engine",

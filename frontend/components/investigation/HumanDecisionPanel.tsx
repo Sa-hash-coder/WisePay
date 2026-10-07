@@ -40,9 +40,8 @@ export function HumanDecisionPanel({
   const handleSubmit = async () => {
     if (!decision || isAuditor) return;
 
-    // Double check AP Reviewer restrictions
-    if (role === 'AP / FINANCE REVIEWER' && decision === 'APPROVE' && !approvalCheck.allowed) {
-      setFeedbackError(approvalCheck.reason || 'This transaction requires Finance Manager approval.');
+    if (decision === 'APPROVE' && !approvalCheck.allowed) {
+      setFeedbackError(approvalCheck.reason || 'You do not have permission to authorize this transaction.');
       return;
     }
 
@@ -75,7 +74,6 @@ export function HumanDecisionPanel({
         if (onDecisionSubmitted) onDecisionSubmitted();
       }
     } catch (err: any) {
-      // In case backend is offline, update UI state gracefully for demo
       setSubmittedDecision({
         decision,
         reviewer: user.name,
@@ -89,20 +87,20 @@ export function HumanDecisionPanel({
 
   if (submittedDecision) {
     return (
-      <Card className="bg-emerald-50/70 border border-emerald-200 p-6 flex flex-col items-center justify-center text-center gap-3 rounded-2xl shadow-xs">
-        <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center">
+      <Card className="bg-[#E8F8EE] border border-[#D1EED8] p-6 flex flex-col items-center justify-center text-center gap-3 rounded-2xl shadow-xs">
+        <div className="w-12 h-12 rounded-full bg-white text-[#16A34A] flex items-center justify-center shadow-xs">
           <CheckCircle2 className="w-6 h-6" />
         </div>
         <div>
-          <span className="inline-block text-[10px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-100/60 px-2 py-0.5 rounded-full mb-1">
-            Audit Ledger Anchored
+          <span className="inline-block text-[10px] font-bold uppercase tracking-wider text-[#16A34A] bg-white px-2.5 py-0.5 rounded-full mb-1 border border-[#D1EED8]">
+            Cryptographic Ledger Anchored
           </span>
-          <h3 className="text-base font-bold text-slate-900">
+          <h3 className="text-base font-bold text-[#0F172A]">
             Decision Recorded: {submittedDecision.decision}
           </h3>
-          <p className="text-xs text-slate-600 mt-1 max-w-md">
-            Authorized by <strong>{submittedDecision.reviewer}</strong> ({submittedDecision.role}).
-            Event hash computed and anchored to immutable Solana audit ledger with SOX compliance metadata.
+          <p className="text-xs text-[#64748B] mt-1 max-w-md">
+            Authorized by <strong className="text-[#0F172A]">{submittedDecision.reviewer}</strong> ({submittedDecision.role}).
+            Event hash computed and anchored to immutable audit chain with SOX compliance metadata.
           </p>
         </div>
       </Card>
@@ -110,23 +108,23 @@ export function HumanDecisionPanel({
   }
 
   return (
-    <Card className="flex flex-col gap-5 p-6 bg-white border border-slate-200 rounded-2xl shadow-xs">
+    <Card className="flex flex-col gap-5 p-6 bg-white border border-[#E2ECE4] rounded-2xl shadow-[0_4px_20px_-2px_rgba(0,0,0,0.02)]">
       {/* Header & Role Badge */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-[#EAEFEA]">
         <div>
           <div className="flex items-center gap-2">
             <h3 className="text-sm font-bold uppercase tracking-wider text-[#0F172A]">
               Human Review & Governance Sign-Off
             </h3>
           </div>
-          <p className="text-xs text-slate-500 mt-0.5">
-            AI Recommendation: <strong className="text-slate-800">{recommendation || 'Verify documentation and vendor history'}</strong>
+          <p className="text-xs text-[#64748B] mt-0.5">
+            AI Recommendation: <strong className="text-[#0F172A]">{recommendation || 'Verify documentation and vendor history'}</strong>
           </p>
         </div>
 
         {/* Active Role Tag */}
         <div className="flex items-center gap-2 self-start sm:self-auto">
-          <span className={`inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full border ${roleConfig.badgeClasses.bg} ${roleConfig.badgeClasses.text} ${roleConfig.badgeClasses.border}`}>
+          <span className={`inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full border ${roleConfig.badgeClasses.bg} ${roleConfig.badgeClasses.text} ${roleConfig.badgeClasses.border}`}>
             <span className={`w-1.5 h-1.5 rounded-full ${roleConfig.badgeClasses.indicator}`} />
             <span>{role}</span>
           </span>
@@ -135,88 +133,78 @@ export function HumanDecisionPanel({
 
       {/* Role-Specific Alert Banners */}
       {isAuditor ? (
-        /* AUDITOR MODE: Segregation of Duties Banner */
-        <div className="p-4 rounded-xl bg-amber-50/70 border border-amber-200 flex items-start gap-3">
-          <Lock className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
-          <div className="text-xs text-amber-900">
+        <div className="p-4 rounded-xl bg-[#FFFBEB] border border-[#FDE68A] flex items-start gap-3">
+          <Lock className="w-5 h-5 text-[#D97706] flex-shrink-0 mt-0.5" />
+          <div className="text-xs text-[#92400E]">
             <div className="font-bold flex items-center gap-1.5">
               <span>Auditor Compliance Oversight (Read-Only)</span>
-              <span className="text-[10px] bg-amber-200/60 text-amber-800 px-1.5 py-0.2 rounded font-mono">
+              <span className="text-[10px] bg-white text-[#B45309] px-2 py-0.2 rounded font-mono border border-[#FDE68A]">
                 SOX 404 / SOC2
               </span>
             </div>
-            <p className="mt-1 text-amber-800/90 leading-relaxed">
+            <p className="mt-1 leading-relaxed">
               <strong>Segregation of Duties (SoD) Active:</strong> Under internal financial controls, independent compliance auditors cannot approve or reject disbursement transactions to preserve operational independence.
             </p>
             <div className="mt-2.5 flex items-center gap-2">
-              <span className="text-[11px] text-amber-700">Need to test approval actions?</span>
+              <span className="text-[11px] text-[#B45309]">Need to test exception actions?</span>
               <button
                 type="button"
-                onClick={() => switchRole('FINANCE MANAGER')}
-                className="text-[11px] font-bold text-indigo-700 hover:text-indigo-800 bg-white border border-amber-300 px-2.5 py-1 rounded-lg shadow-2xs hover:bg-indigo-50 transition-all cursor-pointer"
+                onClick={() => switchRole('AP / FINANCE REVIEWER')}
+                className="text-[11px] font-bold text-[#0D9488] hover:text-[#0F766E] bg-white border border-[#99F6E4] px-3 py-1 rounded-full shadow-2xs hover:bg-[#F0FDFA] transition-all cursor-pointer"
               >
-                Switch to Finance Manager
+                Switch to AP Reviewer
               </button>
             </div>
           </div>
         </div>
-      ) : role === 'AP / FINANCE REVIEWER' && !approvalCheck.allowed ? (
-        /* AP REVIEWER THRESHOLD / HIGH-RISK WARNING */
-        <div className="p-3.5 rounded-xl bg-sky-50/70 border border-sky-200 flex items-start gap-3">
-          <Info className="w-4 h-4 text-sky-600 flex-shrink-0 mt-0.5" />
-          <div className="text-xs text-sky-900">
-            <span className="font-bold">Manager Override Required:</span>{' '}
-            <span>{approvalCheck.reason}</span>
-            <div className="mt-1 text-[11px] text-sky-700">
-              As an AP Reviewer, you can record documentation findings and <strong>Escalate</strong> to the Finance Manager for final disbursement authorization.
-            </div>
+      ) : role === 'THE ORIGINATOR' ? (
+        <div className="p-3.5 rounded-xl bg-[#EFF6FF] border border-[#BFDBFE] flex items-start gap-3">
+          <Info className="w-4 h-4 text-[#2563EB] flex-shrink-0 mt-0.5" />
+          <div className="text-xs text-[#1E40AF]">
+            <span className="font-bold">The Originator (Data Entry Point):</span>{' '}
+            <span>This role is dedicated to receipt and invoice submission. Exception decisions must be performed by the AP / Finance Reviewer.</span>
           </div>
         </div>
-      ) : role === 'FINANCE MANAGER' ? (
-        /* FINANCE MANAGER OVERRIDE CLEARANCE */
-        <div className="p-3 rounded-xl bg-indigo-50/60 border border-indigo-200 flex items-center justify-between text-xs text-indigo-900">
+      ) : (
+        <div className="p-3 rounded-xl bg-[#E8F8EE] border border-[#D1EED8] flex items-center justify-between text-xs text-[#166534]">
           <div className="flex items-center gap-2">
-            <Shield className="w-4 h-4 text-indigo-600" />
-            <span><strong>Manager Clearance:</strong> Full disbursement release authority & policy override enabled.</span>
+            <Shield className="w-4 h-4 text-[#16A34A]" />
+            <span><strong>AP Reviewer Clearance:</strong> Full authority to Approve, Reject, or Escalate flagged exceptions.</span>
           </div>
-          <span className="text-[10px] font-mono text-indigo-600 uppercase font-semibold">Tier-1 Authority</span>
+          <span className="text-[10px] font-mono text-[#16A34A] uppercase font-bold">Human-in-the-Loop Active</span>
         </div>
-      ) : null}
+      )}
 
       {/* Decision Action Buttons */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5">
         {/* Approve Button */}
         <button
           type="button"
-          disabled={isAuditor || (role === 'AP / FINANCE REVIEWER' && !approvalCheck.allowed)}
+          disabled={isAuditor || role === 'THE ORIGINATOR'}
           onClick={() => setDecision('APPROVE')}
-          className={`p-3 rounded-xl border text-xs font-semibold uppercase tracking-wider transition-all flex flex-col items-center gap-1.5 ${
-            isAuditor || (role === 'AP / FINANCE REVIEWER' && !approvalCheck.allowed)
-              ? 'opacity-40 bg-slate-50 border-slate-200 text-slate-400 cursor-not-allowed'
+          className={`p-3 rounded-xl border text-xs font-bold uppercase tracking-wider transition-all flex flex-col items-center gap-1.5 ${
+            isAuditor || role === 'THE ORIGINATOR'
+              ? 'opacity-40 bg-[#FAFCFA] border-[#E2ECE4] text-[#94A3B8] cursor-not-allowed'
               : decision === 'APPROVE'
-              ? 'bg-emerald-600 border-emerald-600 text-white shadow-sm ring-2 ring-emerald-500/20'
-              : 'border-slate-200 bg-white text-slate-700 hover:border-emerald-300 hover:bg-emerald-50/40 hover:text-emerald-700 cursor-pointer'
+              ? 'bg-[#16A34A] border-[#16A34A] text-white shadow-sm'
+              : 'border-[#E2ECE4] bg-white text-[#0F172A] hover:border-[#16A34A] hover:bg-[#E8F8EE] hover:text-[#16A34A] cursor-pointer'
           }`}
-          title={isAuditor ? 'Auditors cannot approve payments (Segregation of Duties)' : undefined}
         >
           <FileCheck className="w-4 h-4" />
-          <span>{role === 'FINANCE MANAGER' && isHighRisk ? 'Manager Override' : 'Approve'}</span>
-          {role === 'AP / FINANCE REVIEWER' && !approvalCheck.allowed && (
-            <span className="text-[9px] font-normal normal-case text-slate-400">Needs Manager</span>
-          )}
+          <span>Approve</span>
         </button>
 
         {/* Reject Button */}
         <button
           type="button"
-          disabled={isAuditor}
+          disabled={isAuditor || role === 'THE ORIGINATOR'}
           onClick={() => setDecision('REJECT')}
-          className={`p-3 rounded-xl border text-xs font-semibold uppercase tracking-wider transition-all flex flex-col items-center gap-1.5 ${
-            isAuditor
-              ? 'opacity-40 bg-slate-50 border-slate-200 text-slate-400 cursor-not-allowed'
+          className={`p-3 rounded-xl border text-xs font-bold uppercase tracking-wider transition-all flex flex-col items-center gap-1.5 ${
+            isAuditor || role === 'THE ORIGINATOR'
+              ? 'opacity-40 bg-[#FAFCFA] border-[#E2ECE4] text-[#94A3B8] cursor-not-allowed'
               : decision === 'REJECT'
-              ? 'bg-rose-600 border-rose-600 text-white shadow-sm ring-2 ring-rose-500/20'
-              : 'border-slate-200 bg-white text-slate-700 hover:border-rose-300 hover:bg-rose-50/40 hover:text-rose-700 cursor-pointer'
+              ? 'bg-[#DC2626] border-[#DC2626] text-white shadow-sm'
+              : 'border-[#E2ECE4] bg-white text-[#0F172A] hover:border-[#DC2626] hover:bg-[#FEF2F2] hover:text-[#DC2626] cursor-pointer'
           }`}
         >
           <ShieldAlert className="w-4 h-4" />
@@ -226,14 +214,14 @@ export function HumanDecisionPanel({
         {/* Legitimate Exception Button */}
         <button
           type="button"
-          disabled={isAuditor}
+          disabled={isAuditor || role === 'THE ORIGINATOR'}
           onClick={() => setDecision('EXCEPTION')}
-          className={`p-3 rounded-xl border text-xs font-semibold uppercase tracking-wider transition-all flex flex-col items-center gap-1.5 ${
-            isAuditor
-              ? 'opacity-40 bg-slate-50 border-slate-200 text-slate-400 cursor-not-allowed'
+          className={`p-3 rounded-xl border text-xs font-bold uppercase tracking-wider transition-all flex flex-col items-center gap-1.5 ${
+            isAuditor || role === 'THE ORIGINATOR'
+              ? 'opacity-40 bg-[#FAFCFA] border-[#E2ECE4] text-[#94A3B8] cursor-not-allowed'
               : decision === 'EXCEPTION'
-              ? 'bg-amber-600 border-amber-600 text-white shadow-sm ring-2 ring-amber-500/20'
-              : 'border-slate-200 bg-white text-slate-700 hover:border-amber-300 hover:bg-amber-50/40 hover:text-amber-700 cursor-pointer'
+              ? 'bg-[#F59E0B] border-[#F59E0B] text-white shadow-sm'
+              : 'border-[#E2ECE4] bg-white text-[#0F172A] hover:border-[#F59E0B] hover:bg-[#FFFBEB] hover:text-[#D97706] cursor-pointer'
           }`}
         >
           <CheckCircle2 className="w-4 h-4" />
@@ -243,24 +231,24 @@ export function HumanDecisionPanel({
         {/* Escalate Button */}
         <button
           type="button"
-          disabled={isAuditor}
+          disabled={isAuditor || role === 'THE ORIGINATOR'}
           onClick={() => setDecision('ESCALATE')}
-          className={`p-3 rounded-xl border text-xs font-semibold uppercase tracking-wider transition-all flex flex-col items-center gap-1.5 ${
-            isAuditor
-              ? 'opacity-40 bg-slate-50 border-slate-200 text-slate-400 cursor-not-allowed'
+          className={`p-3 rounded-xl border text-xs font-bold uppercase tracking-wider transition-all flex flex-col items-center gap-1.5 ${
+            isAuditor || role === 'THE ORIGINATOR'
+              ? 'opacity-40 bg-[#FAFCFA] border-[#E2ECE4] text-[#94A3B8] cursor-not-allowed'
               : decision === 'ESCALATE'
-              ? 'bg-indigo-600 border-indigo-600 text-white shadow-sm ring-2 ring-indigo-500/20'
-              : 'border-slate-200 bg-white text-slate-700 hover:border-indigo-300 hover:bg-indigo-50/40 hover:text-indigo-700 cursor-pointer'
+              ? 'bg-[#0D9488] border-[#0D9488] text-white shadow-sm'
+              : 'border-[#E2ECE4] bg-white text-[#0F172A] hover:border-[#0D9488] hover:bg-[#F0FDFA] hover:text-[#0D9488] cursor-pointer'
           }`}
         >
           <ArrowUpRight className="w-4 h-4" />
-          <span>Escalate to Mgr</span>
+          <span>Escalate</span>
         </button>
       </div>
 
       {/* Review Notes Input */}
       <div className="flex flex-col gap-1.5">
-        <label className="text-xs font-semibold text-slate-700">
+        <label className="text-xs font-bold text-[#0F172A]">
           Governance Rationale & Justification Log
         </label>
         <textarea
@@ -270,33 +258,33 @@ export function HumanDecisionPanel({
           placeholder={
             isAuditor
               ? 'Auditor read-only inspection mode. Decisions are disabled under Segregation of Duties.'
-              : 'Document verified documentation, PO matches, or escalation rationale to be stored on ledger...'
+              : 'Document verified documentation, PO matches, or escalation rationale to be anchored on ledger...'
           }
-          className="bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:bg-white h-20 resize-none font-sans disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+          className="bg-[#FAFCFA] border border-[#E2ECE4] rounded-xl p-3 text-xs text-[#0F172A] placeholder-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-[#16A34A]/20 focus:border-[#16A34A] focus:bg-white h-20 resize-none font-sans disabled:opacity-50 disabled:cursor-not-allowed transition-all"
         />
       </div>
 
       {feedbackError && (
-        <div className="p-2.5 rounded-lg bg-rose-50 border border-rose-200 text-xs text-rose-700 font-medium">
+        <div className="p-2.5 rounded-xl bg-[#FEF2F2] border border-[#FECACA] text-xs text-[#DC2626] font-semibold">
           {feedbackError}
         </div>
       )}
 
       {/* Submit / Status Bar */}
       <div className="flex items-center justify-between pt-2">
-        <div className="text-[11px] text-slate-400 flex items-center gap-1.5">
-          <UserCheck className="w-3.5 h-3.5 text-slate-500" />
-          <span>Signing as: <strong className="text-slate-700">{user.name}</strong> ({role})</span>
+        <div className="text-[11px] text-[#64748B] flex items-center gap-1.5">
+          <UserCheck className="w-3.5 h-3.5 text-[#16A34A]" />
+          <span>Signing as: <strong className="text-[#0F172A]">{user.name}</strong> ({role})</span>
         </div>
 
         <button
           type="button"
           onClick={handleSubmit}
           disabled={!decision || loading || isAuditor}
-          className={`px-5 py-2.5 rounded-xl font-semibold text-xs transition-all flex items-center gap-2 cursor-pointer ${
+          className={`px-5 py-2.5 rounded-full font-bold text-xs transition-all flex items-center gap-2 cursor-pointer ${
             decision && !loading && !isAuditor
-              ? 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-xs hover:shadow'
-              : 'bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200'
+              ? 'bg-[#16A34A] text-white hover:bg-[#15803D] shadow-xs hover:shadow-md'
+              : 'bg-[#FAFCFA] text-[#94A3B8] cursor-not-allowed border border-[#E2ECE4]'
           }`}
         >
           {loading && <Loader2 className="w-3.5 h-3.5 animate-spin" />}

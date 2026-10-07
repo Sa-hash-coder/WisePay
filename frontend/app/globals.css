@@ -1,17 +1,20 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
 @import "tailwindcss";
 
 @theme inline {
-  --color-background: #F1F5F9;
+  --color-background: #F3F8F4;
   --color-foreground: #0F172A;
-  --color-sentinel-navy: #0F172A;
-  --color-sentinel-indigo: #4F46E5;
-  --color-sentinel-canvas: #F1F5F9;
-  --color-sentinel-card: #FFFFFF;
-  --color-sentinel-border: #E2E8F0;
-  --color-sentinel-warning: #D97706;
-  --color-sentinel-danger: #DC2626;
-  --color-sentinel-success: #059669;
+  --color-finlytics-green: #16A34A;
+  --color-finlytics-emerald: #10B981;
+  --color-finlytics-lime: #22C55E;
+  --color-finlytics-light-green: #E8F8EE;
+  --color-finlytics-amber: #F59E0B;
+  --color-finlytics-yellow: #EAB308;
+  --color-finlytics-canvas: #F3F8F4;
+  --color-finlytics-card: #FFFFFF;
+  --color-finlytics-border: #E2ECE4;
+  --color-finlytics-text-dark: #0F172A;
+  --color-finlytics-text-muted: #64748B;
 }
 
 * {
@@ -24,20 +27,25 @@ html {
 }
 
 body {
-  background: #F1F5F9;
+  background: #F3F8F4;
+  background-image: 
+    radial-gradient(at 15% 15%, rgba(220, 252, 231, 0.7) 0px, transparent 55%),
+    radial-gradient(at 85% 10%, rgba(209, 250, 229, 0.6) 0px, transparent 50%),
+    radial-gradient(at 50% 85%, rgba(240, 253, 244, 0.8) 0px, transparent 60%);
+  background-attachment: fixed;
   color: #0F172A;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Custom scrollbar */
+/* Custom scrollbar matching Finlytics soft green */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #F1F5F9;
+  background: #F3F8F4;
 }
 ::-webkit-scrollbar-thumb {
   background: #CBD5E1;
@@ -47,13 +55,34 @@ body {
   background: #94A3B8;
 }
 
-/* Card hover lift */
+/* Finlytics card styling */
+.finlytics-card {
+  background: #FFFFFF;
+  border: 1px solid #E2ECE4;
+  border-radius: 1.25rem;
+  box-shadow: 0 4px 20px -2px rgba(16, 185, 129, 0.03), 0 2px 6px -1px rgba(0, 0, 0, 0.02);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.finlytics-card:hover {
+  border-color: #D1E5D5;
+  box-shadow: 0 10px 25px -3px rgba(22, 163, 74, 0.06), 0 4px 10px -2px rgba(0, 0, 0, 0.03);
+}
+
 .card-hover {
   transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
 }
 .card-hover:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+  box-shadow: 0 12px 28px -5px rgba(22, 163, 74, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+}
+
+/* Finlytics active pill */
+.nav-pill-active {
+  background-color: #E8F8EE;
+  color: #16A34A;
+  font-weight: 600;
+  border: 1px solid #D7EFE0;
 }
 
 /* Skeleton loader */
@@ -64,32 +93,26 @@ body {
 .skeleton {
   background: linear-gradient(
     90deg,
-    rgba(15, 23, 42, 0.04) 25%,
-    rgba(15, 23, 42, 0.08) 50%,
-    rgba(15, 23, 42, 0.04) 75%
+    rgba(22, 163, 74, 0.04) 25%,
+    rgba(22, 163, 74, 0.09) 50%,
+    rgba(22, 163, 74, 0.04) 75%
   );
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }
 
-/* Subtle gradient text */
-.gradient-text-indigo {
-  background: linear-gradient(135deg, #0F172A 0%, #4F46E5 100%);
+/* Gradient text */
+.gradient-text-green {
+  background: linear-gradient(135deg, #0F172A 0%, #16A34A 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-/* Soft grid pattern background */
-.bg-grid-slate {
-  background-image: radial-gradient(rgba(15, 23, 42, 0.08) 1px, transparent 1px);
-  background-size: 24px 24px;
-}
-
-/* Smooth fade-in for staggered content */
+/* Smooth fade-in */
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(8px);
   }
   to {
     opacity: 1;
@@ -97,22 +120,5 @@ body {
   }
 }
 .animate-fade-in-up {
-  animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: fadeInUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
-
-/* Processing stream scroll */
-@keyframes scroll-up {
-  from { transform: translateY(0); }
-  to { transform: translateY(-50%); }
-}
-.animate-scroll-up {
-  animation: scroll-up 20s linear infinite;
-}
-
-/* Receipt scanner laser line */
-@keyframes scanline {
-  0% { top: 18%; opacity: 0.4; }
-  50% { opacity: 0.95; }
-  100% { top: 82%; opacity: 0.4; }
-}
-

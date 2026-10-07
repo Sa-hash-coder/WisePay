@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { AnimatedCounter } from './AnimatedCounter';
+import { Zap, CheckCircle2, ShieldCheck } from 'lucide-react';
 
 interface AttentionSavedGaugeProps {
   percentage: number;
@@ -17,47 +18,53 @@ export function AttentionSavedGauge({ percentage, loading }: AttentionSavedGauge
   }, [percentage, loading]);
 
   return (
-    <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs h-full flex flex-col justify-between">
+    <div className="bg-white border border-[#E2ECE4] rounded-2xl p-6 shadow-[0_4px_20px_-2px_rgba(0,0,0,0.02)] h-full flex flex-col justify-between">
       <div>
-        <div className="flex items-center justify-between mb-5">
-          <div>
-            <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wider">Human Attention Saved</h3>
-            <p className="text-xs text-slate-500 mt-0.5">Transactions requiring zero human intervention</p>
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-xl bg-[#E8F8EE] text-[#16A34A] flex items-center justify-center">
+              <Zap className="w-4 h-4" />
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-[#0F172A] tracking-tight">Autonomous Attention Saved</h3>
+              <p className="text-[11px] text-[#64748B]">Zero-touch automated invoice approvals</p>
+            </div>
           </div>
+
           <div className="text-right">
-            <div className="text-4xl font-extrabold text-emerald-600 tracking-tight">
+            <div className="text-3xl font-extrabold text-[#16A34A] tracking-tight">
               {loading ? '--' : <AnimatedCounter value={Math.round(percentage)} />}%
             </div>
-            <div className="text-xs text-slate-400 mt-0.5">of all transactions</div>
+            <div className="text-[10px] text-[#94A3B8] font-medium">Clearance Rate</div>
           </div>
         </div>
         
-        {/* Progress bar */}
-        <div className="relative h-3.5 bg-slate-200 rounded-full overflow-hidden shadow-inner">
+        {/* Finlytics styled progress bar */}
+        <div className="relative h-3 bg-[#EAF4ED] rounded-full overflow-hidden p-0.5">
           <div
-            className="absolute inset-y-0 left-0 rounded-full shadow-xs"
+            className="h-full rounded-full shadow-xs"
             style={{
               width: `${animated}%`,
-              background: 'linear-gradient(90deg, #059669, #10B981)',
-              transition: 'width 2s cubic-bezier(0.34, 1.56, 0.64, 1)',
+              background: 'linear-gradient(90deg, #10B981, #22C55E)',
+              transition: 'width 1.8s cubic-bezier(0.34, 1.56, 0.64, 1)',
             }}
           />
         </div>
       </div>
       
       {/* Sub-metrics */}
-      <div className="flex flex-wrap items-center gap-3 mt-5 pt-4 border-t border-slate-100">
-        <div className="flex items-center gap-2 bg-slate-50 border border-slate-200/60 px-2.5 py-1 rounded-lg">
-          <div className="w-2 h-2 rounded-full bg-emerald-500" />
-          <span className="text-xs font-medium text-slate-600">Auto-approved</span>
+      <div className="flex flex-wrap items-center gap-2 mt-4 pt-3 border-t border-[#EAEFEA]">
+        <div className="flex items-center gap-1.5 bg-[#F3F8F4] border border-[#E2ECE4] px-2.5 py-1 rounded-lg text-xs font-medium text-[#0F172A]">
+          <div className="w-2 h-2 rounded-full bg-[#10B981]" />
+          <span>Auto-Approved</span>
         </div>
-        <div className="flex items-center gap-2 bg-slate-50 border border-slate-200/60 px-2.5 py-1 rounded-lg">
-          <div className="w-2 h-2 rounded-full bg-amber-500" />
-          <span className="text-xs font-medium text-slate-600">Human escalation</span>
+        <div className="flex items-center gap-1.5 bg-[#F3F8F4] border border-[#E2ECE4] px-2.5 py-1 rounded-lg text-xs font-medium text-[#0F172A]">
+          <div className="w-2 h-2 rounded-full bg-[#F59E0B]" />
+          <span>Tier-1 Review</span>
         </div>
-        <div className="flex items-center gap-2 bg-slate-50 border border-slate-200/60 px-2.5 py-1 rounded-lg">
-          <div className="w-2 h-2 rounded-full bg-rose-500" />
-          <span className="text-xs font-medium text-slate-600">High-risk holds</span>
+        <div className="flex items-center gap-1.5 bg-[#F3F8F4] border border-[#E2ECE4] px-2.5 py-1 rounded-lg text-xs font-medium text-[#0F172A]">
+          <div className="w-2 h-2 rounded-full bg-[#DC2626]" />
+          <span>Quarantine Hold</span>
         </div>
       </div>
     </div>
