@@ -37,12 +37,14 @@ import {
   Cpu,
   Eye,
   Activity,
-  Workflow
+  Workflow,
+  ShieldAlert
 } from 'lucide-react';
 import Link from 'next/link';
 import { api } from '@/lib/api';
 import { useAuth } from '@/context/AuthContext';
 import { formatDate } from '@/lib/utils';
+import { ExceptionTable } from '@/components/queue/ExceptionTable';
 
 export default function AuditPage() {
   return (
@@ -62,7 +64,9 @@ export default function AuditPage() {
 function AuditConsoleContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const currentTab = searchParams.get('tab') || (searchParams.get('view') === 'compliance' ? 'compliance' : 'overview');
+  const rawTab = searchParams.get('tab') || (searchParams.get('view') === 'compliance' ? 'compliance' : 'overview');
+  const validTabs = ['overview', 'exceptions', 'diagram', 'ledger', 'compliance'];
+  const currentTab = validTabs.includes(rawTab) ? rawTab : 'overview';
 
   const { role, roleConfig, switchRole, user } = useAuth();
   
@@ -358,6 +362,18 @@ function AuditConsoleContent() {
         </Link>
 
         <Link
+          href="/audit?tab=exceptions"
+          className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
+            currentTab === 'exceptions'
+              ? 'bg-[#16A34A] text-white shadow-xs'
+              : 'text-[#64748B] hover:text-[#0F172A] hover:bg-[#F1F5F9]'
+          }`}
+        >
+          <ShieldAlert className="w-3.5 h-3.5" />
+          <span>High-Risk Exception Pile</span>
+        </Link>
+
+        <Link
           href="/audit?tab=diagram"
           className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
             currentTab === 'diagram'
@@ -396,6 +412,26 @@ function AuditConsoleContent() {
           <span>SOX 404 & Policy Controls</span>
         </Link>
       </div>
+
+      {/* ========================================================================= */}
+      {/* TAB: HIGH-RISK EXCEPTION PILE (Auditor Forensic Verification Ledger)      */}
+      {/* ========================================================================= */}
+      {currentTab === 'exceptions' && (
+        <div className="space-y-4 animate-fade-in">
+          <div className="p-4 bg-[#FEF2F2] border border-[#FECACA] rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-[#991B1B]">
+            <div className="flex items-center gap-2.5">
+              <ShieldAlert className="w-5 h-5 text-[#DC2626] shrink-0" />
+              <div>
+                <span className="font-bold text-[#DC2626]">Auditor Forensic Exception Queue:</span> Independent auditor oversight of all transactions flagged by ML Anomaly Detection, Duplicate Radar, and Policy Threshold breaches for SOX 404 audit verification.
+              </div>
+            </div>
+            <div className="text-[11px] font-mono font-bold text-[#DC2626] bg-white/80 px-2.5 py-1 rounded-lg border border-[#FECACA] shrink-0">
+              SOX 404 Independent Ledger
+            </div>
+          </div>
+          <ExceptionTable />
+        </div>
+      )}
 
       {/* ========================================================================= */}
       {/* TAB 1: OVERVIEW & HASH VERIFICATION (Clean, focused view)                 */}
