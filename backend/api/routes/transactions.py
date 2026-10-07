@@ -78,7 +78,7 @@ def list_exception_pile(
     """
     query = db.query(Invoice).filter(Invoice.decision.in_(["HUMAN_REVIEW", "HIGH_RISK"]))
 
-    cleaned_search = (search or "").strip()
+    cleaned_search = search.strip() if isinstance(search, str) else ""
     if cleaned_search and cleaned_search.lower() not in ["none", "null", "undefined"]:
         search_pattern = f"%{cleaned_search}%"
         query = query.filter(
@@ -89,6 +89,14 @@ def list_exception_pile(
         )
 
     all_flagged = query.order_by(Invoice.risk_score.desc()).all()
+
+    category_counts = {
+        "all": len(all_flagged),
+        "high_risk": 0,
+        "duplicates": 0,
+        "policy": 0,
+        "missing_receipt": 0,
+    }
 
     items_to_return = []
     for inv in all_flagged:
@@ -112,9 +120,34 @@ def list_exception_pile(
             isinstance(r, dict) and r.get("rule_id") == "MISSING_RECEIPT" for r in rules_list
         )
         is_policy = any(
-            isinstance(r, dict) and r.get("rule_id") in ["POLICY_LIMIT", "SPLIT_PO", "WEEKEND_SUBMISSION"] for r in rules_list
+            isinstance(r, dict) and r.get("rule_id") in ["POLICY_LIMIT", "SPLIT_PO", "WEEKEND_SUBMISSION", "ROUND_NUMBER", "NEW_VENDOR"] for r in rules_list
         )
         is_high_risk = inv.decision == "HIGH_RISK" or (inv.risk_score and inv.risk_score >= 70.0)
+
+        # Count categories globally before filtering
+        if is_high_risk:
+            category_counts["high_risk"] += 1
+        if is_dup:
+            category_counts["duplicates"] += 1
+        if is_policy:
+            category_counts["policy"] += 1
+        if is_missing_receipt:
+            category_counts["missing_receipt"] += 1
+
+        # Bill Health Evaluation: BAD (High Risk), MID (Caution/Review), GOOD (Low Risk)
+        risk_score_val = float(inv.risk_score) if inv.risk_score is not None else 0.0
+        if is_high_risk or risk_score_val >= 70.0 or is_dup:
+            health_grade = "BAD"
+            health_label = "Bad"
+            health_badge = "Bad · High Risk"
+        elif risk_score_val >= 30.0 or is_policy or is_missing_receipt or inv.decision == "HUMAN_REVIEW":
+            health_grade = "MID"
+            health_label = "Mid"
+            health_badge = "Mid · Caution"
+        else:
+            health_grade = "GOOD"
+            health_label = "Good"
+            health_badge = "Good · Low Risk"
 
         # AI Citation / Explanation
         citations = []
@@ -152,6 +185,9 @@ def list_exception_pile(
         item_dict["is_duplicate"] = is_dup
         item_dict["is_missing_receipt"] = is_missing_receipt
         item_dict["is_policy_breach"] = is_policy
+        item_dict["health_grade"] = health_grade
+        item_dict["health_label"] = health_label
+        item_dict["health_badge"] = health_badge
 
         # Audit & SOX 404 compliance attribution
         latest_decision = inv.human_decisions[-1] if inv.human_decisions else None
@@ -187,6 +223,7 @@ def list_exception_pile(
         "total": total_filtered,
         "page": page,
         "size": size,
+        "counts": category_counts,
         "items": paged_items,
     }
 

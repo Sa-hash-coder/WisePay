@@ -60,6 +60,19 @@ function ExceptionPileContent() {
   const { role, roleConfig, isAuditor, isOriginator, user } = useAuth();
   const [data, setData] = useState<any[]>([]);
   const [total, setTotal] = useState(0);
+  const [counts, setCounts] = useState<{
+    all: number;
+    high_risk: number;
+    duplicates: number;
+    policy: number;
+    missing_receipt: number;
+  }>({
+    all: 50,
+    high_risk: 30,
+    duplicates: 10,
+    policy: 30,
+    missing_receipt: 10,
+  });
   const [loading, setLoading] = useState(true);
   const [flagFilter, setFlagFilter] = useState<string>(normalizeCategory(queryCategory));
   const [search, setSearch] = useState<string>(urlSearch);
@@ -81,6 +94,29 @@ function ExceptionPileContent() {
     setSearch(paramSearch);
   }, [queryCategory, searchParams]);
 
+  const fetchExceptions = (filterToUse = flagFilter, searchToUse = search) => {
+    setLoading(true);
+    const sTerm = searchToUse.trim();
+    api.transactions.exceptions({
+      flag_type: filterToUse,
+      search: sTerm ? sTerm : undefined,
+      page,
+      size: 50,
+    })
+      .then((res: any) => {
+        setData(res.items || []);
+        setTotal(res.total || 0);
+        if (res.counts) {
+          setCounts(res.counts);
+        }
+        setLoading(false);
+      })
+      .catch((err: any) => {
+        console.error('Failed to fetch Exception Pile', err);
+        setLoading(false);
+      });
+  };
+
   const handleFilterChange = (newFilter: string) => {
     setFlagFilter(newFilter);
     setPage(1);
@@ -90,31 +126,12 @@ function ExceptionPileContent() {
     } else {
       router.push(`/queue?category=${newFilter}${sParam}`);
     }
-  };
-
-  const fetchExceptions = () => {
-    setLoading(true);
-    const sTerm = search.trim();
-    api.transactions.exceptions({
-      flag_type: flagFilter,
-      search: sTerm ? sTerm : undefined,
-      page,
-      size: 50,
-    })
-      .then((res: any) => {
-        setData(res.items || []);
-        setTotal(res.total || 0);
-        setLoading(false);
-      })
-      .catch((err: any) => {
-        console.error('Failed to fetch Exception Pile', err);
-        setLoading(false);
-      });
+    fetchExceptions(newFilter, search);
   };
 
   useEffect(() => {
-    fetchExceptions();
-  }, [flagFilter, page, search]);
+    fetchExceptions(flagFilter, search);
+  }, [flagFilter, page]);
 
   const openActionModal = (tx: any, action: 'APPROVE' | 'REJECT' | 'ESCALATE') => {
     setSelectedTx(tx);
@@ -186,12 +203,12 @@ function ExceptionPileContent() {
             onClick={() => handleFilterChange('ALL')}
             className={`px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-1.5 cursor-pointer ${
               flagFilter === 'ALL' 
-                ? 'bg-[#0D9488] text-white shadow-xs' 
-                : 'bg-[#FAFCFA] border border-[#E2ECE4] text-[#64748B] hover:text-[#0F172A]'
+                ? 'bg-[#0D9488] text-white shadow-xs ring-2 ring-[#0D9488]/30' 
+                : 'bg-[#FAFCFA] border border-[#E2ECE4] text-[#64748B] hover:text-[#0F172A] hover:border-[#CBD5E1]'
             }`}
           >
             <Layers className="w-3.5 h-3.5" />
-            All Exceptions ({total})
+            All Exceptions ({counts.all})
           </button>
 
           <button 
@@ -199,12 +216,12 @@ function ExceptionPileContent() {
             onClick={() => handleFilterChange('HIGH_RISK')}
             className={`px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-1.5 cursor-pointer ${
               flagFilter === 'HIGH_RISK' 
-                ? 'bg-[#DC2626] text-white shadow-xs' 
-                : 'bg-[#FAFCFA] border border-[#E2ECE4] text-[#64748B] hover:text-[#DC2626]'
+                ? 'bg-[#DC2626] text-white shadow-xs ring-2 ring-[#DC2626]/30' 
+                : 'bg-[#FAFCFA] border border-[#E2ECE4] text-[#64748B] hover:text-[#DC2626] hover:border-[#FECACA]'
             }`}
           >
             <ShieldAlert className="w-3.5 h-3.5" />
-            High-Risk Anomalies
+            High-Risk Anomalies ({counts.high_risk})
           </button>
 
           <button 
@@ -212,12 +229,12 @@ function ExceptionPileContent() {
             onClick={() => handleFilterChange('DUPLICATES')}
             className={`px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-1.5 cursor-pointer ${
               flagFilter === 'DUPLICATES' 
-                ? 'bg-[#2563EB] text-white shadow-xs' 
-                : 'bg-[#FAFCFA] border border-[#E2ECE4] text-[#64748B] hover:text-[#2563EB]'
+                ? 'bg-[#2563EB] text-white shadow-xs ring-2 ring-[#2563EB]/30' 
+                : 'bg-[#FAFCFA] border border-[#E2ECE4] text-[#64748B] hover:text-[#2563EB] hover:border-[#BFDBFE]'
             }`}
           >
             <Sparkles className="w-3.5 h-3.5" />
-            Duplicate Invoices
+            Duplicate Invoices ({counts.duplicates})
           </button>
 
           <button 
@@ -225,12 +242,12 @@ function ExceptionPileContent() {
             onClick={() => handleFilterChange('POLICY')}
             className={`px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-1.5 cursor-pointer ${
               flagFilter === 'POLICY' 
-                ? 'bg-[#D97706] text-white shadow-xs' 
-                : 'bg-[#FAFCFA] border border-[#E2ECE4] text-[#64748B] hover:text-[#D97706]'
+                ? 'bg-[#D97706] text-white shadow-xs ring-2 ring-[#D97706]/30' 
+                : 'bg-[#FAFCFA] border border-[#E2ECE4] text-[#64748B] hover:text-[#D97706] hover:border-[#FDE68A]'
             }`}
           >
             <AlertTriangle className="w-3.5 h-3.5" />
-            Policy Limits & Split PO
+            Policy Limits & Split PO ({counts.policy})
           </button>
 
           <button 
@@ -238,12 +255,12 @@ function ExceptionPileContent() {
             onClick={() => handleFilterChange('MISSING_RECEIPT')}
             className={`px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-1.5 cursor-pointer ${
               flagFilter === 'MISSING_RECEIPT' 
-                ? 'bg-[#7C3AED] text-white shadow-xs' 
-                : 'bg-[#FAFCFA] border border-[#E2ECE4] text-[#64748B] hover:text-[#7C3AED]'
+                ? 'bg-[#7C3AED] text-white shadow-xs ring-2 ring-[#7C3AED]/30' 
+                : 'bg-[#FAFCFA] border border-[#E2ECE4] text-[#64748B] hover:text-[#7C3AED] hover:border-[#DDD6FE]'
             }`}
           >
             <FileCheck2 className="w-3.5 h-3.5" />
-            Missing Receipts
+            Missing Receipts ({counts.missing_receipt})
           </button>
         </div>
 
@@ -264,7 +281,7 @@ function ExceptionPileContent() {
           </form>
           <button
             type="button"
-            onClick={fetchExceptions}
+            onClick={() => fetchExceptions()}
             title="Refresh exception pile"
             className="p-2 bg-white hover:bg-[#E8F8EE] border border-[#E2ECE4] hover:border-[#D1EED8] rounded-full text-[#64748B] hover:text-[#16A34A] transition-colors shadow-xs cursor-pointer"
           >
@@ -311,7 +328,8 @@ function ExceptionPileContent() {
               <th className="py-3.5 px-4">Invoice / Transaction</th>
               <th className="py-3.5 px-4">Entity & Submitter</th>
               <th className="py-3.5 px-4">Amount & Receipt</th>
-              <th className="py-3.5 px-4 w-[34%]">Flagged Exceptions & AI Citation</th>
+              <th className="py-3.5 px-4 text-center">Health Assessment</th>
+              <th className="py-3.5 px-4 w-[32%]">Flagged Exceptions & AI Citation</th>
               <th className="py-3.5 px-4">Audit & Reviewer Signoff</th>
               <th className="py-3.5 px-4 text-center">Triage Actions</th>
             </tr>
@@ -319,7 +337,7 @@ function ExceptionPileContent() {
           <tbody className="divide-y divide-[#EAEFEA] text-xs">
             {loading ? (
               <tr>
-                <td colSpan={6} className="text-center py-16 text-[#94A3B8]">
+                <td colSpan={7} className="text-center py-16 text-[#94A3B8]">
                   <div className="flex flex-col items-center justify-center gap-2">
                     <RefreshCw className="w-5 h-5 animate-spin text-[#0D9488]" />
                     <span className="text-xs">Loading Exception Pile flagged anomalies...</span>
@@ -328,7 +346,7 @@ function ExceptionPileContent() {
               </tr>
             ) : data.length === 0 ? (
               <tr>
-                <td colSpan={6} className="text-center py-14 text-[#94A3B8] text-xs">
+                <td colSpan={7} className="text-center py-14 text-[#94A3B8] text-xs">
                   <div className="flex flex-col items-center justify-center gap-2">
                     <CheckCircle className="w-6 h-6 text-[#16A34A]" />
                     <span className="font-bold text-[#0F172A]">Exception Pile is Clean!</span>
@@ -389,6 +407,52 @@ function ExceptionPileContent() {
                         </span>
                       )}
                     </div>
+                  </td>
+
+                  {/* Health Assessment (Good / Mid / Bad) */}
+                  <td className="py-3.5 px-4 text-center">
+                    {(() => {
+                      const isBad = tx.health_grade === 'BAD' || tx.risk_score >= 70 || tx.decision === 'HIGH_RISK' || tx.is_duplicate;
+                      const isMid = tx.health_grade === 'MID' || (tx.risk_score >= 30 && tx.risk_score < 70) || tx.decision === 'HUMAN_REVIEW' || tx.is_missing_receipt;
+
+                      if (isBad) {
+                        return (
+                          <div className="inline-flex flex-col items-center gap-1">
+                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-black tracking-wider uppercase bg-[#FEF2F2] text-[#DC2626] border border-[#FECACA] shadow-xs">
+                              <span className="w-2 h-2 rounded-full bg-[#DC2626] animate-pulse" />
+                              BAD
+                            </span>
+                            <span className="text-[10px] text-[#DC2626] font-mono font-bold">
+                              High Risk ({Number(tx.risk_score || 0).toFixed(1)})
+                            </span>
+                          </div>
+                        );
+                      }
+                      if (isMid) {
+                        return (
+                          <div className="inline-flex flex-col items-center gap-1">
+                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-black tracking-wider uppercase bg-[#FFFBEB] text-[#D97706] border border-[#FDE68A] shadow-xs">
+                              <span className="w-2 h-2 rounded-full bg-[#D97706]" />
+                              MID
+                            </span>
+                            <span className="text-[10px] text-[#D97706] font-mono font-bold">
+                              Caution ({Number(tx.risk_score || 0).toFixed(1)})
+                            </span>
+                          </div>
+                        );
+                      }
+                      return (
+                        <div className="inline-flex flex-col items-center gap-1">
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-black tracking-wider uppercase bg-[#E8F8EE] text-[#16A34A] border border-[#D1EED8] shadow-xs">
+                            <span className="w-2 h-2 rounded-full bg-[#16A34A]" />
+                            GOOD
+                          </span>
+                          <span className="text-[10px] text-[#16A34A] font-mono font-bold">
+                            Safe ({Number(tx.risk_score || 0).toFixed(1)})
+                          </span>
+                        </div>
+                      );
+                    })()}
                   </td>
 
                   {/* Flagged Exceptions & AI Explanation */}
