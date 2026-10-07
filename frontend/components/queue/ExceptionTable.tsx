@@ -45,17 +45,24 @@ function ExceptionPileContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const queryCategory = searchParams.get('category') || searchParams.get('filter');
+  const urlSearch = searchParams.get('search') || '';
+
+  const normalizeCategory = (cat: string | null) => {
+    if (!cat) return 'ALL';
+    const up = cat.toUpperCase();
+    if (['HIGH_RISK', 'HIGH-RISK'].includes(up)) return 'HIGH_RISK';
+    if (['DUPLICATE', 'DUPLICATES'].includes(up)) return 'DUPLICATES';
+    if (['POLICY', 'POLICY_LIMIT', 'POLICY_LIMITS'].includes(up)) return 'POLICY';
+    if (['MISSING_RECEIPT', 'MISSING_RECEIPTS', 'MISSING_FIELDS'].includes(up)) return 'MISSING_RECEIPT';
+    return 'ALL';
+  };
 
   const { role, roleConfig, isAuditor, isOriginator, user } = useAuth();
   const [data, setData] = useState<any[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [flagFilter, setFlagFilter] = useState<string>(
-    queryCategory && ['ALL', 'HIGH_RISK', 'DUPLICATES', 'POLICY', 'MISSING_RECEIPT'].includes(queryCategory.toUpperCase())
-      ? queryCategory.toUpperCase()
-      : 'ALL'
-  );
-  const [search, setSearch] = useState('');
+  const [flagFilter, setFlagFilter] = useState<string>(normalizeCategory(queryCategory));
+  const [search, setSearch] = useState<string>(urlSearch);
   const [page, setPage] = useState(1);
 
   // Action modal state
@@ -66,31 +73,31 @@ function ExceptionPileContent() {
   const [actionSuccessMsg, setActionSuccessMsg] = useState<string | null>(null);
   const [actionErrorMsg, setActionErrorMsg] = useState<string | null>(null);
 
-  // Sync state when URL param changes
+  // Sync state when URL params change
   useEffect(() => {
-    if (queryCategory) {
-      const normalized = queryCategory.toUpperCase();
-      if (['ALL', 'HIGH_RISK', 'DUPLICATES', 'POLICY', 'MISSING_RECEIPT'].includes(normalized)) {
-        setFlagFilter(normalized);
-      }
-    }
-  }, [queryCategory]);
+    const norm = normalizeCategory(queryCategory);
+    setFlagFilter(norm);
+    const paramSearch = searchParams.get('search') || '';
+    setSearch(paramSearch);
+  }, [queryCategory, searchParams]);
 
   const handleFilterChange = (newFilter: string) => {
     setFlagFilter(newFilter);
     setPage(1);
+    const sParam = search.trim() ? `&search=${encodeURIComponent(search.trim())}` : '';
     if (newFilter === 'ALL') {
-      router.push('/queue');
+      router.push(search.trim() ? `/queue?search=${encodeURIComponent(search.trim())}` : '/queue');
     } else {
-      router.push(`/queue?category=${newFilter}`);
+      router.push(`/queue?category=${newFilter}${sParam}`);
     }
   };
 
   const fetchExceptions = () => {
     setLoading(true);
+    const sTerm = search.trim();
     api.transactions.exceptions({
       flag_type: flagFilter,
-      search: search.trim() || undefined,
+      search: sTerm ? sTerm : undefined,
       page,
       size: 50,
     })
@@ -107,7 +114,7 @@ function ExceptionPileContent() {
 
   useEffect(() => {
     fetchExceptions();
-  }, [flagFilter, page]);
+  }, [flagFilter, page, search]);
 
   const openActionModal = (tx: any, action: 'APPROVE' | 'REJECT' | 'ESCALATE') => {
     setSelectedTx(tx);
@@ -302,10 +309,10 @@ function ExceptionPileContent() {
           <thead>
             <tr className="border-b border-[#E2ECE4] bg-[#FAFCFA] text-[#64748B] text-xs uppercase tracking-wider font-bold">
               <th className="py-3.5 px-4">Invoice / Transaction</th>
-              <th className="py-3.5 px-4">Entity & Category</th>
-              <th className="py-3.5 px-4">Disbursement Amount</th>
-              <th className="py-3.5 px-4 w-[36%]">AI Explanation / Citation</th>
-              <th className="py-3.5 px-4">Anomaly Score</th>
+              <th className="py-3.5 px-4">Entity & Submitter</th>
+              <th className="py-3.5 px-4">Amount & Receipt</th>
+              <th className="py-3.5 px-4 w-[34%]">Flagged Exceptions & AI Citation</th>
+              <th className="py-3.5 px-4">Audit & Reviewer Signoff</th>
               <th className="py-3.5 px-4 text-center">Triage Actions</th>
             </tr>
           </thead>
@@ -326,19 +333,22 @@ function ExceptionPileContent() {
                     <CheckCircle className="w-6 h-6 text-[#16A34A]" />
                     <span className="font-bold text-[#0F172A]">Exception Pile is Clean!</span>
                     <span className="text-[11px] text-[#64748B]">
-                      All active transactions have been resolved or approved.
+                      No exceptions match current filters or search query.
                     </span>
                   </div>
                 </td>
               </tr>
             ) : data.map((tx) => {
               const isResolved = tx.human_decision && tx.human_decision !== 'PENDING';
+              const categories = tx.flag_categories || (
+                tx.decision === 'HIGH_RISK' ? ['HIGH_RISK'] : ['POLICY_LIMIT']
+              );
 
               return (
                 <tr 
                   key={tx.id || tx.invoice_id} 
                   className={`transition-colors group hover:bg-[#F8FAF8] ${
-                    tx.decision === 'HIGH_RISK' ? 'bg-[#FEF2F2]/30' : 'bg-[#FFFBEB]/30'
+                    tx.decision === 'HIGH_RISK' ? 'bg-[#FEF2F2]/25' : 'bg-[#FFFBEB]/20'
                   }`}
                 >
                   {/* Invoice & Date */}
@@ -350,71 +360,118 @@ function ExceptionPileContent() {
                     </div>
                   </td>
 
-                  {/* Vendor / Employee */}
+                  {/* Vendor & Submitter */}
                   <td className="py-3.5 px-4">
-                    <div className="text-[#0F172A] font-bold">{tx.vendor_name || tx.employee_name}</div>
-                    <div className="text-[10px] text-[#64748B] flex items-center gap-1">
-                      <span>{tx.category}</span>
-                      {tx.employee_dept && <span>• {tx.employee_dept}</span>}
+                    <div className="text-[#0F172A] font-bold text-xs">{tx.vendor_name || 'Vendor Entity'}</div>
+                    <div className="text-[10.5px] text-[#475569] mt-0.5 flex items-center gap-1">
+                      <span className="text-[#94A3B8]">Submitted by:</span>
+                      <span className="font-semibold text-[#0F172A]">{tx.employee_name || tx.submitted_by || 'Staff Member'}</span>
+                    </div>
+                    <div className="text-[10px] text-[#64748B] mt-0.5">
+                      <span>{tx.employee_dept || tx.submitter_dept || 'Operations'}</span>
+                      {tx.category && <span className="text-[#94A3B8]"> &middot; {tx.category}</span>}
                     </div>
                   </td>
 
-                  {/* Amount */}
+                  {/* Amount & Receipt */}
                   <td className="py-3.5 px-4">
                     <div className="font-mono font-bold text-[#0F172A] text-sm">
                       {formatCurrency(tx.amount)}
                     </div>
-                    {tx.receipt_status === 'MISSING' && (
-                      <span className="text-[9px] font-bold uppercase text-[#DC2626] bg-[#FEF2F2] px-1.5 py-0.5 rounded border border-[#FECACA]">
-                        Missing Receipt
-                      </span>
-                    )}
+                    <div className="mt-1">
+                      {tx.receipt_status === 'MISSING' ? (
+                        <span className="text-[9px] font-bold uppercase text-[#DC2626] bg-[#FEF2F2] px-1.5 py-0.5 rounded border border-[#FECACA]">
+                          Missing Receipt
+                        </span>
+                      ) : (
+                        <span className="text-[9px] font-bold uppercase text-[#16A34A] bg-[#E8F8EE] px-1.5 py-0.5 rounded border border-[#D1EED8]">
+                          Receipt Verified
+                        </span>
+                      )}
+                    </div>
                   </td>
 
-                  {/* AI Explanation / Citation (Key Hook Requirement) */}
+                  {/* Flagged Exceptions & AI Explanation */}
                   <td className="py-3.5 px-4">
-                    <div className="p-2.5 bg-white border border-[#E2ECE4] rounded-xl shadow-xs space-y-1">
-                      <div className="flex items-center gap-1.5 text-[10px] font-bold text-[#D97706] uppercase tracking-wider">
-                        <Sparkles className="w-3.5 h-3.5 text-[#F59E0B]" />
-                        <span>AI Citation:</span>
+                    <div className="p-2.5 bg-white border border-[#E2ECE4] rounded-xl shadow-xs space-y-1.5">
+                      {/* Flag Tags */}
+                      <div className="flex flex-wrap items-center gap-1">
+                        {categories.map((cat: string) => (
+                          <span
+                            key={cat}
+                            className={`text-[9px] font-bold px-1.5 py-0.5 rounded uppercase border ${
+                              cat === 'HIGH_RISK'
+                                ? 'bg-[#FEF2F2] text-[#B91C1C] border-[#FECACA]'
+                                : cat === 'DUPLICATE' || cat === 'DUPLICATES'
+                                ? 'bg-[#EFF6FF] text-[#1D4ED8] border-[#BFDBFE]'
+                                : cat === 'POLICY_LIMIT' || cat === 'POLICY'
+                                ? 'bg-[#FFFBEB] text-[#B45309] border-[#FDE68A]'
+                                : 'bg-[#F5F3FF] text-[#6D28D9] border-[#DDD6FE]'
+                            }`}
+                          >
+                            {cat === 'HIGH_RISK' ? 'High Risk' : cat === 'DUPLICATE' ? 'Duplicate' : cat === 'POLICY_LIMIT' ? 'Policy Breach' : cat}
+                          </span>
+                        ))}
+                        <RiskBadge score={tx.risk_score} />
                       </div>
+
+                      {/* AI Citation */}
                       <p className="text-[11px] text-[#0F172A] font-medium leading-relaxed">
-                        {tx.ai_citation || tx.anomaly_details?.explanation || tx.reason || 'Flagged by ML isolation forest and deterministic rules.'}
+                        {tx.ai_citation || tx.anomaly_details?.explanation || tx.reason || 'Flagged by ML isolation forest and deterministic policy rules.'}
                       </p>
                     </div>
                   </td>
 
-                  {/* Anomaly Risk Score */}
+                  {/* Audit & Reviewer Signoff */}
                   <td className="py-3.5 px-4">
-                    <RiskBadge score={tx.risk_score} />
-                    <div className="mt-1">
-                      <DecisionBadge decision={tx.decision} />
-                    </div>
-                  </td>
-
-                  {/* Actions Column: Approve, Reject, Escalate */}
-                  <td className="py-3.5 px-4 text-center">
                     {isResolved ? (
-                      <div className="inline-flex flex-col items-center">
-                        <span className={`px-2.5 py-1 rounded-full text-[10px] font-mono font-bold uppercase border ${
+                      <div className="space-y-1">
+                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase border ${
                           tx.human_decision === 'APPROVE'
                             ? 'bg-[#E8F8EE] text-[#16A34A] border-[#D1EED8]'
                             : tx.human_decision === 'REJECT'
                             ? 'bg-[#FEF2F2] text-[#DC2626] border-[#FECACA]'
                             : 'bg-[#F5F3FF] text-[#7C3AED] border-[#DDD6FE]'
                         }`}>
-                          ✓ {tx.human_decision}D
+                          <Check className="w-3 h-3" />
+                          {tx.human_decision}D
                         </span>
+                        <div className="text-[10px] text-[#0F172A] font-semibold">
+                          {tx.reviewed_by || 'AP / Finance Reviewer'}
+                        </div>
+                        {tx.decision_reason && (
+                          <div className="text-[9.5px] text-[#64748B] italic line-clamp-2">
+                            &quot;{tx.decision_reason}&quot;
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="space-y-1">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#FFFBEB] text-[#B45309] border border-[#FDE68A]">
+                          <AlertTriangle className="w-2.5 h-2.5" />
+                          Pending Human Review
+                        </span>
+                        <div className="text-[10px] text-[#64748B]">
+                          Clearance: AP Reviewer
+                        </div>
+                      </div>
+                    )}
+                  </td>
+
+                  {/* Actions Column: Approve, Reject, Escalate / Inspect Trail */}
+                  <td className="py-3.5 px-4 text-center">
+                    {isResolved ? (
+                      <div className="inline-flex flex-col items-center">
                         <Link 
                           href={`/investigate/${tx.id || tx.invoice_id}`}
-                          className="text-[10px] text-[#0D9488] hover:underline mt-1 font-semibold flex items-center gap-0.5"
+                          className="px-2.5 py-1 bg-white hover:bg-[#F0FDF4] border border-[#D1EED8] rounded-lg text-[10px] text-[#16A34A] font-bold shadow-2xs hover:shadow-xs transition-all inline-flex items-center gap-1"
                         >
                           Forensic Trail <ArrowRight className="w-2.5 h-2.5" />
                         </Link>
                       </div>
                     ) : isAuditor ? (
                       <Link href={`/investigate/${tx.id || tx.invoice_id}`}>
-                        <button className="px-3 py-1.5 rounded-full text-xs font-bold bg-[#FFFBEB] text-[#B45309] border border-[#FDE68A] hover:bg-[#FDE68A] transition-colors cursor-pointer inline-flex items-center gap-1">
+                        <button className="px-3 py-1.5 rounded-full text-xs font-bold bg-[#FFFBEB] text-[#B45309] border border-[#FDE68A] hover:bg-[#FDE68A] transition-colors cursor-pointer inline-flex items-center gap-1 shadow-2xs">
                           <Lock className="w-3 h-3" /> Inspect Trail
                         </button>
                       </Link>

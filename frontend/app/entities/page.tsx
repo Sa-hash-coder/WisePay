@@ -286,7 +286,7 @@ export default function EntitiesPage() {
                           </span>
                         </td>
                         <td className="py-3.5 px-4 text-right">
-                          <Link href={`/queue?filter=ALL`}>
+                          <Link href={`/queue?search=${encodeURIComponent(v.name)}`}>
                             <button className="px-3 py-1 bg-white hover:bg-[#E8F8EE] border border-[#E2ECE4] hover:border-[#D1EED8] rounded-full text-xs font-semibold text-[#16A34A] shadow-xs transition-colors cursor-pointer">
                               View Bills ↗
                             </button>
@@ -364,7 +364,7 @@ export default function EntitiesPage() {
                           </span>
                         </td>
                         <td className="py-3.5 px-4 text-right">
-                          <Link href={`/queue?filter=ALL`}>
+                          <Link href={`/queue?search=${encodeURIComponent(e.name)}`}>
                             <button className="px-3 py-1 bg-white hover:bg-[#E8F8EE] border border-[#E2ECE4] hover:border-[#D1EED8] rounded-full text-xs font-semibold text-[#16A34A] shadow-xs transition-colors cursor-pointer">
                               Activity ↗
                             </button>

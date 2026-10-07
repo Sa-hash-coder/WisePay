@@ -115,19 +115,25 @@ export const api = {
     processingStream: () => secureFetch(`${BASE_URL}/dashboard/processing_stream`),
   },
   transactions: {
-    list: async (params: Record<string, string | number>) => {
-      const stringParams = Object.fromEntries(
-        Object.entries(params).map(([k, v]) => [k, String(v)])
-      );
-      const query = new URLSearchParams(stringParams).toString();
+    list: async (params: Record<string, any>) => {
+      const cleanParams: Record<string, string> = {};
+      Object.entries(params || {}).forEach(([k, v]) => {
+        if (v !== undefined && v !== null && v !== '') {
+          cleanParams[k] = String(v);
+        }
+      });
+      const query = new URLSearchParams(cleanParams).toString();
       const res = await secureFetch(`${BASE_URL}/transactions?${query}`);
       return res || { total: 0, page: 1, size: 50, items: [] };
     },
     exceptions: async (params: { flag_type?: string; search?: string; page?: number; size?: number } = {}) => {
-      const stringParams = Object.fromEntries(
-        Object.entries(params).map(([k, v]) => [k, String(v)])
-      );
-      const query = new URLSearchParams(stringParams).toString();
+      const cleanParams: Record<string, string> = {};
+      Object.entries(params || {}).forEach(([k, v]) => {
+        if (v !== undefined && v !== null && v !== '') {
+          cleanParams[k] = String(v);
+        }
+      });
+      const query = new URLSearchParams(cleanParams).toString();
       const res = await secureFetch(`${BASE_URL}/transactions/exceptions${query ? `?${query}` : ''}`);
       return res || { total: 0, page: 1, size: 50, items: [] };
     },
@@ -180,11 +186,23 @@ export const api = {
   },
   entities: {
     vendors: (params?: { category?: string; search?: string }) => {
-      const q = new URLSearchParams(params as any).toString();
+      const cleanParams: Record<string, string> = {};
+      Object.entries(params || {}).forEach(([k, v]) => {
+        if (v !== undefined && v !== null && v !== '') {
+          cleanParams[k] = String(v);
+        }
+      });
+      const q = new URLSearchParams(cleanParams).toString();
       return secureFetch(`${BASE_URL}/entities/vendors${q ? `?${q}` : ''}`);
     },
     employees: (params?: { department?: string; search?: string }) => {
-      const q = new URLSearchParams(params as any).toString();
+      const cleanParams: Record<string, string> = {};
+      Object.entries(params || {}).forEach(([k, v]) => {
+        if (v !== undefined && v !== null && v !== '') {
+          cleanParams[k] = String(v);
+        }
+      });
+      const q = new URLSearchParams(cleanParams).toString();
       return secureFetch(`${BASE_URL}/entities/employees${q ? `?${q}` : ''}`);
     },
     summary: () => secureFetch(`${BASE_URL}/entities/summary`),

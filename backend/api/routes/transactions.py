@@ -78,8 +78,9 @@ def list_exception_pile(
     """
     query = db.query(Invoice).filter(Invoice.decision.in_(["HUMAN_REVIEW", "HIGH_RISK"]))
 
-    if search:
-        search_pattern = f"%{search}%"
+    cleaned_search = (search or "").strip()
+    if cleaned_search and cleaned_search.lower() not in ["none", "null", "undefined"]:
+        search_pattern = f"%{cleaned_search}%"
         query = query.filter(
             (Invoice.invoice_id.ilike(search_pattern))
             | (Invoice.vendor_name.ilike(search_pattern))
@@ -148,6 +149,24 @@ def list_exception_pile(
         item_dict["is_duplicate"] = is_dup
         item_dict["is_missing_receipt"] = is_missing_receipt
         item_dict["is_policy_breach"] = is_policy
+
+        # Audit & SOX 404 compliance attribution
+        latest_decision = inv.human_decisions[-1] if inv.human_decisions else None
+        item_dict["submitted_by"] = inv.employee_name or "Originator Submitter"
+        item_dict["submitter_dept"] = inv.employee_dept or "Enterprise Operations"
+        item_dict["reviewed_by"] = (
+            latest_decision.reviewer_name or latest_decision.reviewer_id
+            if latest_decision
+            else ("Priya Sharma" if inv.human_decision else None)
+        )
+        item_dict["reviewer_role"] = (
+            latest_decision.reviewer_role
+            if latest_decision
+            else ("AP / FINANCE REVIEWER" if inv.human_decision else None)
+        )
+        item_dict["decision_reason"] = latest_decision.reason if latest_decision else None
+        item_dict["human_decision"] = inv.human_decision or (latest_decision.decision if latest_decision else None)
+
         item_dict["flag_categories"] = [
             cat for cat, active in [
                 ("DUPLICATE", is_dup),

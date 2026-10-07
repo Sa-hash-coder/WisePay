@@ -92,9 +92,11 @@ function SidebarNav() {
         title: 'COMPLIANCE & AUDIT CONSOLE',
         items: [
           { href: '/audit', label: 'Audit Trails & Verification', icon: ShieldCheck, exactCheck: () => pathname === '/audit' && (!currentTab || currentTab === 'overview') },
+          { href: '/audit?tab=exceptions', label: 'High-Risk Exception Pile', icon: ShieldAlert, exactCheck: () => pathname === '/audit' && currentTab === 'exceptions' },
           { href: '/audit?tab=diagram', label: 'Visual Audit Graph (Diagram)', icon: GitFork, exactCheck: () => pathname === '/audit' && currentTab === 'diagram' },
           { href: '/audit?tab=ledger', label: 'Ledger Blocks & Event Log', icon: Layers, exactCheck: () => pathname === '/audit' && currentTab === 'ledger' },
           { href: '/audit?tab=compliance', label: 'SOX 404 & Policy Controls', icon: FileCheck2, exactCheck: () => pathname === '/audit' && currentTab === 'compliance' },
+          { href: '/queue', label: 'Auditor Exception Review Ledger', icon: AlertTriangle, exactCheck: () => pathname === '/queue' },
         ]
       },
       {
