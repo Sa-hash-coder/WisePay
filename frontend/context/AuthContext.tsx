@@ -60,6 +60,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .catch(() => {
           // Token expired or server unreachable, fallback to cached
         });
+    } else {
+      // Auto-authenticate default demo user
+      api.auth.login(ROLE_CONFIGS[DEFAULT_ROLE].defaultUser.email, 'Password123!')
+        .then((res) => {
+          if (res && res.access_token) {
+            setToken(res.access_token);
+          }
+        })
+        .catch(() => {});
     }
 
     try {
@@ -134,6 +143,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch {
       // ignore
     }
+
+    // Seamlessly fetch JWT for switched demo persona
+    api.auth.login(defaultUserForRole.email, 'Password123!')
+      .then((res) => {
+        if (res && res.access_token) {
+          setToken(res.access_token);
+        }
+      })
+      .catch(() => {});
   };
 
   const setUserProfile = (profile: Partial<UserProfile>) => {

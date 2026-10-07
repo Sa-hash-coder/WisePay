@@ -1,0 +1,16 @@
+invoice_id,invoice_number,vendor_id,vendor_name,category,employee_id,employee_name,employee_dept,amount,currency,invoice_date,approval_status,receipt_status,description,decision,risk_score
+INV-2026-1001,PO-88201,V001,CloudScale Hosting,Cloud,E001,Priya Sharma,Finance,12450.00,INR,2026-09-15,APPROVED,UPLOADED,Monthly AWS Production Server Infrastructure,AUTO_PASS,12.0
+INV-2026-1002,PO-88202,V002,Global Office Supplies,Office,E002,Rahul Verma,Operations,4800.00,INR,2026-09-16,APPROVED,UPLOADED,Quarterly Stationery & Printing Consumables,AUTO_PASS,8.5
+INV-2026-1003,PO-88203,V003,Vertex Legal Advisory,Legal,E003,Ananya Iyer,Corporate Legal,450000.00,INR,2026-09-18,APPROVED,UPLOADED,Annual Compliance Retainer & IP Filing,AUTO_PASS,22.0
+INV-2026-1004,PO-88204,V004,Apex Cloud Solutions,IT Services,E004,David Miller,Engineering,648500.00,INR,2026-09-20,PENDING,MISSING,Enterprise Kubernetes Cluster Migration Services,HIGH_RISK,84.0
+INV-2026-1005,PO-88205,V004,Apex Cloud Solutions,IT Services,E004,David Miller,Engineering,648500.00,INR,2026-09-22,PENDING,MISSING,Duplicate Billed Cluster Migration Contract,HIGH_RISK,92.0
+INV-2026-1006,PO-88206,V005,Zenith Logistics,Logistics,E005,Siddharth Rao,Supply Chain,32000.00,INR,2026-09-21,PENDING,UPLOADED,Inter-state Freight & Customs Clearance,HUMAN_REVIEW,48.0
+INV-2026-1007,PO-88207,V006,Metro Print & Media,Printing,E006,Neha Kapoor,Marketing,20000.00,INR,2026-09-27,PENDING,UPLOADED,Round Number Bill for Conference Brochures,HUMAN_REVIEW,52.0
+INV-2026-1008,PO-88208,V007,Swift Corporate Travel,Travel,E007,Vikram Malhotra,Sales,78500.00,INR,2026-09-28,PENDING,MISSING,Executive Client Visit Airfare & Hospitality,HUMAN_REVIEW,65.0
+INV-2026-1009,PO-88209,V008,Horizon Security Systems,Security,E008,Karan Patel,IT Infrastructure,185000.00,INR,2026-09-29,APPROVED,UPLOADED,Biometric Access Control Licensing,AUTO_PASS,18.0
+INV-2026-1010,PO-88210,V009,Elite Catering Services,Food,E009,Pooja Hegde,HR & Admin,15200.00,INR,2026-09-30,APPROVED,UPLOADED,Annual All-Hands Lunch Catering,AUTO_PASS,14.0
+INV-2026-1011,PO-88211,V010,Nexus Hardware Corp,Equipment,E010,Amitabh Sen,Engineering,920000.00,INR,2026-10-01,PENDING,UPLOADED,High-Performance GPU Server Nodes,HIGH_RISK,78.0
+INV-2026-1012,PO-88212,V001,CloudScale Hosting,Cloud,E001,Priya Sharma,Finance,12450.00,INR,2026-10-02,APPROVED,UPLOADED,Monthly Production Server Infrastructure (Recurring),AUTO_PASS,10.0
+INV-2026-1013,PO-88213,V002,Global Office Supplies,Office,E002,Rahul Verma,Operations,100000.00,INR,2026-10-03,PENDING,MISSING,Round Sum Bulk Ergonomic Chairs Without Tax Invoice,HIGH_RISK,86.0
+INV-2026-1014,PO-88214,V007,Swift Corporate Travel,Travel,E007,Vikram Malhotra,Sales,24000.00,INR,2026-10-04,APPROVED,UPLOADED,Domestic Flights to Bangalore Tech Summit,AUTO_PASS,15.0
+INV-2026-1015,PO-88215,V005,Zenith Logistics,Logistics,E005,Siddharth Rao,Supply Chain,389000.00,INR,2026-10-05,PENDING,UPLOADED,Peak Season International Air Cargo Shipment,HUMAN_REVIEW,58.0
