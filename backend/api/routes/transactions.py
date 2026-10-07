@@ -131,16 +131,16 @@ def list_exception_pile(
 
         ai_citation = " • ".join(citations) if citations else f"Flagged by Risk Engine (Score: {float(inv.risk_score):.1f})"
 
-        # Flag filter
+        # Flag filter: support all frontend query aliases
         if flag_type and flag_type != "ALL":
             ft = flag_type.upper()
-            if ft == "DUPLICATES" and not is_dup:
+            if ft in ["DUPLICATE", "DUPLICATES"] and not is_dup:
                 continue
-            if ft == "HIGH_RISK" and not is_high_risk:
+            if ft in ["HIGH_RISK", "HIGH-RISK", "ANOMALY", "ANOMALIES"] and not is_high_risk:
                 continue
-            if ft == "POLICY_LIMITS" and not is_policy:
+            if ft in ["POLICY", "POLICY_LIMIT", "POLICY_LIMITS"] and not is_policy:
                 continue
-            if ft == "MISSING_FIELDS" and not is_missing_receipt:
+            if ft in ["MISSING_RECEIPT", "MISSING_RECEIPTS", "MISSING_FIELD", "MISSING_FIELDS"] and not is_missing_receipt:
                 continue
 
         item_dict = inv.to_dict()
