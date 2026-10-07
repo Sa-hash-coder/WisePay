@@ -13,10 +13,15 @@ if not dotenv_path.exists():
 load_dotenv(dotenv_path=dotenv_path)
 
 # Database Configuration
-DATABASE_URL: str = os.getenv(
+raw_db_url = os.getenv(
     "DATABASE_URL",
-    "postgresql+psycopg2://postgres:postgres@localhost:5432/wisepay",
+    "sqlite:///./wisepay.db",
 )
+if "sqlite" in raw_db_url and ("./" in raw_db_url or not os.path.isabs(raw_db_url.replace("sqlite:///", ""))):
+    db_file = (BASE_DIR / "wisepay.db").resolve()
+    DATABASE_URL = f"sqlite:///{db_file.as_posix()}"
+else:
+    DATABASE_URL = raw_db_url
 
 # Application & Security Settings
 SECRET_KEY: str = os.getenv(
