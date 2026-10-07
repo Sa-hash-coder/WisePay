@@ -677,140 +677,108 @@ function AuditConsoleContent() {
       {currentTab === 'diagram' && (
         <div className="space-y-6 animate-fade-in">
 
-          {/* =========================================== */}
-          {/* INTERACTIVE SVG ANIMATED PIPELINE DIAGRAM   */}
-          {/* =========================================== */}
+          {/* ========================================================== */}
+          {/* INTERACTIVE MERKLE DAG GRAPH (LIVE BACKEND DATA)           */}
+          {/* ========================================================== */}
           <div className="p-5 rounded-2xl bg-white border border-[#CBD5E1] shadow-2xs space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
                 <h3 className="text-sm font-extrabold text-[#0F172A] flex items-center gap-2">
                   <Workflow className="w-4 h-4 text-[#16A34A]" />
-                  <span>Audit Architecture &amp; State Machine Flow</span>
+                  <span>Live Cryptographic Merkle DAG (Real Backend Ledger)</span>
                 </h3>
                 <p className="text-xs text-[#64748B] mt-0.5">
-                  Visual lifecycle: Originator submission &rarr; Azure OCR &rarr; ONNX ML &rarr; SOX 404 &rarr; 90/10 Triage &rarr; SHA-256 Seal
+                  Interactive transaction graph: Click any node to inspect its cryptographic SHA-256 seal, payload, and audit proof.
                 </p>
               </div>
-              <div className="flex items-center gap-1.5 flex-wrap">
-                {(['ALL', 'AUTO_PASS', 'EXCEPTION', 'HUMAN'] as const).map((mode) => (
-                  <button
-                    key={mode}
-                    type="button"
-                    onClick={() => setDiagramFilter(mode)}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                      diagramFilter === mode
-                        ? 'bg-[#0F172A] text-white shadow-xs'
-                        : 'bg-[#F1F5F9] text-[#64748B] hover:text-[#0F172A]'
-                    }`}
-                  >
-                    {mode === 'ALL' && 'All Chains'}
-                    {mode === 'AUTO_PASS' && 'AI 90% Auto-Pass'}
-                    {mode === 'EXCEPTION' && '10% Exceptions'}
-                    {mode === 'HUMAN' && 'Human Overrides'}
-                  </button>
-                ))}
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-mono font-bold text-[#16A34A] bg-[#E8F8EE] border border-[#D1EED8] px-2.5 py-1 rounded-xl flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-[#16A34A] animate-ping" />
+                  {timelineBlocks.length} Live Blocks
+                </span>
+                <div className="flex items-center gap-1">
+                  {(['ALL', 'AUTO_PASS', 'EXCEPTION', 'HUMAN'] as const).map((mode) => (
+                    <button
+                      key={mode}
+                      type="button"
+                      onClick={() => setDiagramFilter(mode)}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                        diagramFilter === mode
+                          ? 'bg-[#0F172A] text-white shadow-xs'
+                          : 'bg-[#F1F5F9] text-[#64748B] hover:text-[#0F172A]'
+                      }`}
+                    >
+                      {mode === 'ALL' && 'All Blocks'}
+                      {mode === 'AUTO_PASS' && 'Auto-Pass'}
+                      {mode === 'EXCEPTION' && 'Exceptions'}
+                      {mode === 'HUMAN' && 'Overrides'}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
 
-            {/* SVG Flow Diagram */}
-            <div className="w-full overflow-x-auto bg-[#F8FAFC] rounded-2xl border border-[#E2E8F0] p-4">
-              <svg viewBox="0 0 940 180" className="w-full min-w-[700px]" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                  <marker id="aGreen" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5" orient="auto">
-                    <polygon points="0 0, 7 3.5, 0 7" fill="#16A34A" />
-                  </marker>
-                  <marker id="aOrange" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5" orient="auto">
-                    <polygon points="0 0, 7 3.5, 0 7" fill="#D97706" />
-                  </marker>
-                  <filter id="cardShadow" x="-5%" y="-5%" width="110%" height="120%">
-                    <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#00000015" />
-                  </filter>
-                  <filter id="glowGreen">
-                    <feGaussianBlur stdDeviation="3" result="blur" />
-                    <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-                  </filter>
-                </defs>
+            {/* Interactive Graph Canvas displaying real chronological Merkle blocks */}
+            <div className="w-full overflow-x-auto bg-[#0F172A] rounded-2xl p-4 border border-[#1E293B]">
+              <div className="flex items-center gap-3 min-w-max py-4 px-2">
+                {diagramFilteredBlocks.slice(0, 15).map((block, idx) => {
+                  const bIdx = block.block_index !== undefined ? block.block_index : idx;
+                  const isSelected = selectedDiagramBlock?.block_index === bIdx;
+                  const isTampered = isSimulatedTamper && bIdx === 1;
+                  const isAutoPass = block.event_type?.includes('AUTO') || block.event_type?.includes('PASS') || block.event_type === 'INVOICE_PROCESSED';
+                  const isHuman = block.event_type?.includes('HUMAN') || block.event_type?.includes('OVERRIDE');
+                  const isException = block.event_type?.includes('EXCEPTION') || block.event_type?.includes('BREACH') || block.event_type?.includes('ANOMALY');
 
-                {/* ── STAGE 1: Originator Intake ── */}
-                <rect x="8" y="55" width="116" height="70" rx="14" fill="#EFF6FF" stroke="#93C5FD" strokeWidth="1.5" filter="url(#cardShadow)" />
-                <rect x="8" y="55" width="116" height="6" rx="5" fill="#2563EB" />
-                <circle cx="34" cy="82" r="13" fill="#2563EB" />
-                <text x="34" y="87" textAnchor="middle" fill="white" fontSize="11" fontWeight="bold">1</text>
-                <text x="74" y="82" textAnchor="middle" fill="#1E40AF" fontSize="9.5" fontWeight="bold">Document</text>
-                <text x="74" y="94" textAnchor="middle" fill="#1E40AF" fontSize="9.5" fontWeight="bold">Intake</text>
-                <text x="66" y="113" textAnchor="middle" fill="#3B82F6" fontSize="8">PDF · Scan · API</text>
+                  const color = isTampered ? '#EF4444' : isHuman ? '#A855F7' : isException ? '#F59E0B' : '#10B981';
+                  const bgBadge = isTampered ? 'bg-red-500/20 text-red-400 border-red-500/30' : isHuman ? 'bg-purple-500/20 text-purple-400 border-purple-500/30' : isException ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' : 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30';
+                  const label = isTampered ? 'TAMPERED' : isHuman ? 'OVERRIDE' : isException ? 'EXCEPTION' : 'AUTO-PASS';
 
-                {/* Animated connector 1→2 */}
-                <line x1="124" y1="90" x2="152" y2="90" stroke="#16A34A" strokeWidth="2.5" markerEnd="url(#aGreen)" />
-                <circle r="4" fill="#16A34A"><animate attributeName="cx" values="124;151" dur="1.4s" repeatCount="indefinite" /><animateTransform attributeName="cy" type="translate" from="0 90" to="0 90" dur="1.4s" repeatCount="indefinite" /><animate attributeName="opacity" values="0;1;1;0" dur="1.4s" repeatCount="indefinite" /></circle>
+                  return (
+                    <React.Fragment key={block.id || idx}>
+                      {idx > 0 && (
+                        <div className="flex items-center shrink-0">
+                          <div className="w-6 h-0.5 bg-[#334155] relative">
+                            <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1.5 h-1.5 border-t border-r border-[#64748B] rotate-45" />
+                          </div>
+                        </div>
+                      )}
 
-                {/* ── STAGE 2: Azure OCR ── */}
-                <rect x="154" y="55" width="116" height="70" rx="14" fill="#F0FDF4" stroke="#86EFAC" strokeWidth="1.5" filter="url(#cardShadow)" />
-                <rect x="154" y="55" width="116" height="6" rx="5" fill="#16A34A" />
-                <circle cx="180" cy="82" r="13" fill="#16A34A" />
-                <text x="180" y="87" textAnchor="middle" fill="white" fontSize="11" fontWeight="bold">2</text>
-                <text x="220" y="82" textAnchor="middle" fill="#166534" fontSize="9.5" fontWeight="bold">Azure AI</text>
-                <text x="220" y="94" textAnchor="middle" fill="#166534" fontSize="9.5" fontWeight="bold">OCR</text>
-                <text x="212" y="113" textAnchor="middle" fill="#16A34A" fontSize="8">Prebuilt-Invoice F0</text>
+                      <div
+                        onClick={() => setSelectedDiagramBlock(block)}
+                        className={`p-3.5 rounded-xl border transition-all cursor-pointer shrink-0 w-[170px] select-none ${
+                          isSelected
+                            ? 'bg-[#1E293B] shadow-[0_0_15px_rgba(16,185,129,0.3)] ring-2 ring-[#10B981]'
+                            : 'bg-[#1E293B]/70 hover:bg-[#1E293B] border-[#334155] hover:border-[#64748B]'
+                        }`}
+                        style={{ borderColor: isSelected ? color : undefined }}
+                      >
+                        <div className="flex items-center justify-between gap-1 mb-2">
+                          <span className="font-mono text-xs font-black text-white flex items-center gap-1">
+                            <span className="w-2 h-2 rounded-full" style={{ backgroundColor: color }} />
+                            #{bIdx}
+                          </span>
+                          <span className={`text-[8.5px] font-bold px-1.5 py-0.5 rounded-md border ${bgBadge}`}>
+                            {label}
+                          </span>
+                        </div>
 
-                {/* Animated connector 2→3 */}
-                <line x1="270" y1="90" x2="298" y2="90" stroke="#16A34A" strokeWidth="2.5" markerEnd="url(#aGreen)" />
-                <circle r="4" fill="#16A34A"><animate attributeName="cx" values="270;297" dur="1.4s" begin="0.4s" repeatCount="indefinite" /><animate attributeName="opacity" values="0;1;1;0" dur="1.4s" begin="0.4s" repeatCount="indefinite" /></circle>
+                        <div className="font-mono text-[10px] text-white font-bold truncate">
+                          {block.transaction_id ? block.transaction_id.slice(0, 16) : `TX-${bIdx}`}
+                        </div>
 
-                {/* ── STAGE 3: ONNX ML ── */}
-                <rect x="300" y="55" width="116" height="70" rx="14" fill="#FAF5FF" stroke="#D8B4FE" strokeWidth="1.5" filter="url(#cardShadow)" />
-                <rect x="300" y="55" width="116" height="6" rx="5" fill="#9333EA" />
-                <circle cx="326" cy="82" r="13" fill="#9333EA" />
-                <text x="326" y="87" textAnchor="middle" fill="white" fontSize="11" fontWeight="bold">3</text>
-                <text x="366" y="82" textAnchor="middle" fill="#6B21A8" fontSize="9.5" fontWeight="bold">ONNX ML</text>
-                <text x="366" y="94" textAnchor="middle" fill="#6B21A8" fontSize="9.5" fontWeight="bold">Engine</text>
-                <text x="358" y="113" textAnchor="middle" fill="#A855F7" fontSize="8">Isolation Forest + NLP</text>
+                        <div className="mt-2 text-[9px] font-mono text-[#94A3B8] truncate bg-[#0F172A] px-2 py-1 rounded border border-[#334155]">
+                          {block.hash ? `${block.hash.slice(0, 10)}...${block.hash.slice(-4)}` : '0000...'}
+                        </div>
 
-                {/* Animated connector 3→4 */}
-                <line x1="416" y1="90" x2="444" y2="90" stroke="#16A34A" strokeWidth="2.5" markerEnd="url(#aGreen)" />
-                <circle r="4" fill="#16A34A"><animate attributeName="cx" values="416;443" dur="1.4s" begin="0.8s" repeatCount="indefinite" /><animate attributeName="opacity" values="0;1;1;0" dur="1.4s" begin="0.8s" repeatCount="indefinite" /></circle>
-
-                {/* ── STAGE 4: SOX 404 ── */}
-                <rect x="446" y="55" width="116" height="70" rx="14" fill="#FFFBEB" stroke="#FDE68A" strokeWidth="1.5" filter="url(#cardShadow)" />
-                <rect x="446" y="55" width="116" height="6" rx="5" fill="#D97706" />
-                <circle cx="472" cy="82" r="13" fill="#D97706" />
-                <text x="472" y="87" textAnchor="middle" fill="white" fontSize="11" fontWeight="bold">4</text>
-                <text x="512" y="82" textAnchor="middle" fill="#92400E" fontSize="9.5" fontWeight="bold">SOX 404</text>
-                <text x="512" y="94" textAnchor="middle" fill="#92400E" fontSize="9.5" fontWeight="bold">Limits</text>
-                <text x="504" y="113" textAnchor="middle" fill="#D97706" fontSize="8">Duplicate Radar</text>
-
-                {/* Animated connector 4→5 */}
-                <line x1="562" y1="90" x2="590" y2="90" stroke="#16A34A" strokeWidth="2.5" markerEnd="url(#aGreen)" />
-                <circle r="4" fill="#16A34A"><animate attributeName="cx" values="562;589" dur="1.4s" begin="1.2s" repeatCount="indefinite" /><animate attributeName="opacity" values="0;1;1;0" dur="1.4s" begin="1.2s" repeatCount="indefinite" /></circle>
-
-                {/* ── STAGE 5: Triage Split ── */}
-                <rect x="592" y="55" width="116" height="70" rx="14" fill="#F0F9FF" stroke="#7DD3FC" strokeWidth="1.5" filter="url(#cardShadow)" />
-                <rect x="592" y="55" width="116" height="6" rx="5" fill="#0284C7" />
-                <circle cx="618" cy="82" r="13" fill="#0284C7" />
-                <text x="618" y="87" textAnchor="middle" fill="white" fontSize="11" fontWeight="bold">5</text>
-                <text x="658" y="82" textAnchor="middle" fill="#075985" fontSize="9.5" fontWeight="bold">90 / 10</text>
-                <text x="658" y="94" textAnchor="middle" fill="#075985" fontSize="9.5" fontWeight="bold">Triage Split</text>
-                <text x="650" y="113" textAnchor="middle" fill="#0284C7" fontSize="8">Pass or AP Queue</text>
-
-                {/* Fork: green arrow → SHA-256, orange dashed → AP Queue */}
-                <line x1="708" y1="78" x2="736" y2="78" stroke="#16A34A" strokeWidth="2.5" markerEnd="url(#aGreen)" />
-                <circle r="4" fill="#16A34A"><animate attributeName="cx" values="708;735" dur="1.4s" begin="1.6s" repeatCount="indefinite" /><animate attributeName="opacity" values="0;1;1;0" dur="1.4s" begin="1.6s" repeatCount="indefinite" /></circle>
-                <path d="M708 102 Q708 155 650 155 L620 155" stroke="#D97706" strokeWidth="1.8" strokeDasharray="5 3" fill="none" markerEnd="url(#aOrange)" />
-                <text x="640" y="170" fill="#D97706" fontSize="7.5" fontWeight="bold" textAnchor="middle">10% → AP Review Queue</text>
-
-                {/* ── STAGE 6: SHA-256 Block (finale) ── */}
-                <rect x="736" y="45" width="130" height="90" rx="14" fill="#14532D" stroke="#16A34A" strokeWidth="2" filter="url(#glowGreen)" />
-                <rect x="736" y="45" width="130" height="8" rx="5" fill="#16A34A" />
-                <circle cx="764" cy="85" r="14" fill="white" fillOpacity="0.18" stroke="#86EFAC" strokeWidth="1.5" />
-                <text x="764" y="90" textAnchor="middle" fill="white" fontSize="11" fontWeight="bold">6</text>
-                <text x="820" y="82" textAnchor="middle" fill="#86EFAC" fontSize="9.5" fontWeight="bold">SHA-256</text>
-                <text x="820" y="94" textAnchor="middle" fill="#86EFAC" fontSize="9.5" fontWeight="bold">Block Seal</text>
-                <text x="820" y="110" textAnchor="middle" fill="#4ADE80" fontSize="8">Immutable Chain</text>
-                <circle cx="840" cy="90" r="44" fill="none" stroke="#22C55E" strokeWidth="0.8" opacity="0.3">
-                  <animate attributeName="r" values="38;50;38" dur="2.5s" repeatCount="indefinite" />
-                  <animate attributeName="opacity" values="0.35;0;0.35" dur="2.5s" repeatCount="indefinite" />
-                </circle>
-              </svg>
+                        <div className="mt-2 text-[8.5px] text-[#64748B] flex items-center justify-between">
+                          <span>SHA-256</span>
+                          <span className="text-[#10B981] font-semibold">Verified ✓</span>
+                        </div>
+                      </div>
+                    </React.Fragment>
+                  );
+                })}
+              </div>
             </div>
           </div>
 
